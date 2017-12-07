@@ -1,0 +1,188 @@
+body {
+	background: #EBF2F9;
+	padding-top: 80px;
+	padding-bottom: 40px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+/* Navbar with gradient and shadow */
+.navbar-shadow {
+  background-color: #3777BD;
+  /*background-image: linear-gradient(top, #333333, #222222);*/
+  background-repeat: repeat-x;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);/*, inset 0 -5px 0 rgba(0, 0, 0, 0.1);*/
+}
+
+.navbar-inverse .navbar-nav>li>a {
+	color: #EBF2F9;
+}
+.navbar-inverse .navbar-nav>li>a:hover {
+	color: #7FAADA;
+}
+.navbar-inverse .navbar-brand {
+	color: #EBF2F9;
+}
+.navbar-inverse .navbar-brand:hover {
+	color: #7FAADA;
+}
+
+.thumbnail {
+  border: 1px solid #3777BD;
+  background-color: rgba(255, 255, 255, 0.7);
+	border-radius: 8px;
+}
+
+.panel {
+  border: 2px solid #3777BD;
+  background-color:transparent;
+}
+
+.panel-title {
+  font-size: 22px;
+}
+
+.panel-default > .panel-heading {
+  background-color: #7FAADA;
+}
+
+.panel-title > a {
+color: #EBF2F9;
+text-decoration: none;
+}
+.panel-title > a:hover {
+  color: #3777BD;
+	text-decoration: none;
+}
+
+.panel-collapse {
+  border-top: 2px solid #3777BD;
+}
+
+/* centered columns styles */
+.row-centered {
+    text-align:center;
+}
+
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+h1 small,
+h2 small,
+h3 small,
+h4 small,
+h5 small,
+h6 small {
+  font-weight: normal;
+  color: #3777BD;
+}
+
+span[rel~="tooltip"] {
+	border-bottom: 1px dashed #696;
+	color: #252;
+}
+
+.page-header {
+  border-bottom: 1px solid #3777BD;
+}
+
+
+/* Syntax-highlighting related CSS directives.
+  'desert' scheme ported from vim to google prettify */
+pre.prettyprint {
+  padding: 15px;
+  border: 1px solid #555555;
+  background-color: #2C2C2C;
+  /*text-shadow: 0 1px 0 #EBF2F9;*/
+  border-radius: 8px;
+}
+code.prettyprint {
+	background: #686959;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.nocode { background-color: none; color: #000; }
+.str { color: #ffa0a0 } /* string  - pink */
+.kwd { color: #f0e68c; font-weight: bold }
+.com { color: #87ceeb } /* comment - skyblue */
+.typ { color: #98fb98 } /* type    - lightgreen */
+.lit { color: #ffa0a0 } /* literal - pink */
+.pun { color: #ddd }    /* punctuation */
+.pln { color: #ddd }    /* plaintext */
+.tag { color: #f0e68c; font-weight: bold } /* html/xml tag    - lightyellow */
+.atn { color: #bdb76b; font-weight: bold } /* attribute name  - khaki */
+.atv { color: #ffa0a0 } /* attribute value - pink */
+.dec { color: #98fb98 } /* decimal         - lightgreen */
+
+ol.linenums {
+  margin: 0 0 0 25px;
+}
+ol.linenums li {
+  color: #ddd;
+  line-height: 18px;
+  /*text-shadow: 0 1px 0 #2B5C92;*/
+  margin: 0 0 0 -28px;
+}
+
+.prettyprint.linenums {
+	box-shadow: inset 40px 0 0 #2C2C2C, inset 41px 0 0 #555555;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+h1 {
+	font-weight:bold;
+	font-size: 30px;
+}
+
+h2 {
+	font-weight:bold;
+	font-size: 24px;
+}
+
+h3 {
+	font-weight:bold;
+	font-size: 18px;
+}
+
+.alert-danger {
+  margin-top:10px;
+  background-color: #EA725D;
+  border-color: #DD3A1D;
+  color: #222;
+  text-shadow:none;
+	border-radius: 8px;
+}
+
+.alert-info {
+  margin-top:10px;
+  border-color: #868867;
+  color: #333;
+  text-shadow:none;
+  background-color: #EDD928;
+	  border-radius: 8px;
+}
+
+.table>thead>tr>th,
+.table>tbody>tr>th,
+.table>tfoot>tr>th,
+.table>thead>tr>td,
+.table>tbody>tr>td,
+.table>tfoot>tr>td,
+.table>tbody,
+.table>thead,
+.table>tfoot{
+  border-color: #3777BD !important;
+}
