@@ -10,6 +10,7 @@
 		MathJax.Hub.Typeset();
 	};
 
+	$("#pa0-body").load("pa0.html", prettify);
 	$("#pa1-body").load("pa1.html", prettify);
 	$("#pa2-body").load("pa2.html", prettify);
 	$("#pa3-body").load("pa3.html", prettify);

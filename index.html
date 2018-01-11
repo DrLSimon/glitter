@@ -35,6 +35,7 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
+            <li><a href="#pa0" data-toggle="collapse" data-parent="#accordion">Assignment 0</a></li>
             <li><a href="#pa1" data-toggle="collapse" data-parent="#accordion">Assignment 1</a></li>
             <li><a href="#pa2" data-toggle="collapse" data-parent="#accordion">Assignment 2</a></li>
             <li><a href="#pa3" data-toggle="collapse" data-parent="#accordion">Assignment 3</a></li>
@@ -52,7 +53,7 @@
         </div>
       </div>
       <div class="page-header">
-        <h1>glitter <small>OpenGL Tutorial Tasks on Efficient Rendering</small></h1>
+        <h1>glitter <small>OpenGL Iterative Tutorial Tasks on Efficient Rendering</small></h1>
       </div>
 
       <div class="row">
@@ -76,12 +77,12 @@
           </p>
           <h2>Core features</h2>
           The glitter base code provides a few features that would be tedious
-          to implement from scratch. The following are included:
+          to implement from scratch. The following features are included:
           <ul>
             <li>Window management (glfw)</li>
             <li>OpenGL context initialization (glew and glfw)</li>
             <li>Basic matrix vector algebra (glm)</li>
-            <li>A loader for Wavefront OBJ files</li>
+            <li>A loader for Wavefront OBJ files (tinyobjloader)</li>
           </ul>
         </div>
 
@@ -112,8 +113,18 @@
 
       <div class="panel-group row" id="accordion" style="margin-top:40px">
         <div class="panel panel-default">
+          <div id="pa0-header" class="panel-heading">
+            <h4 class="panel-title"> <a data-toggle="collapse" data-parent="#accordion" href="#pa0">Assignment 0: Downloading and Compiling glitter </a></h4>
+          </div>
+          <div id="pa0" class="panel-collapse collapse">
+            <div class="panel-body">
+              <div id="pa0-body"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
           <div id="pa1-header" class="panel-heading">
-            <h4 class="panel-title"> <a data-toggle="collapse" data-parent="#accordion" href="#pa1">Assignment 1: Downloading and Compiling glitter </a></h4>
+            <h4 class="panel-title"> <a data-toggle="collapse" data-parent="#accordion" href="#pa1">Assignment 1: VAO and shaders </a></h4>
           </div>
           <div id="pa1" class="panel-collapse collapse">
             <div class="panel-body">
@@ -123,7 +134,7 @@
         </div>
         <div class="panel panel-default">
           <div id="pa2-header" class="panel-heading">
-            <h4 class="panel-title"> <a data-toggle="collapse" data-parent="#accordion" href="#pa2">Assignment 2: VAO and shaders </a></h4>
+            <h4 class="panel-title"> <a data-toggle="collapse" data-parent="#accordion" href="#pa2">Assignment 2: uniform variables and true 3D meshes </a></h4>
           </div>
           <div id="pa2" class="panel-collapse collapse">
             <div class="panel-body">

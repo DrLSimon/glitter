@@ -1,145 +1,45 @@
-<div style="margin-top:-20px">
-<h3>Part 1: the <tt>git</tt> revision control system</h3>
-<div class="text-justify">
-<p>
-	The base code of glitter is provided as a <tt>git</tt> repository. <tt>git</tt>
-	is the most widespread distributed version control system in use today—it is a good
-	idea to familiarize yourself with this system if you've never used it before.
-        As the semester progresses, we will push out a number of additions to
-        the glitter framework. You can simply <tt>merge</tt> our new revisions
-        into your repository to benefit from these improvements.
-</p>
-<p>
-Recommended learning resources for git are:
-<a href="https://try.github.io/levels/1/challenges/1">try git</a>,
-<a href="http://rogerdudler.github.io/git-guide/">git-the simple guide</a>,
-the <a href="http://gitimmersion.com/index.html">git immersion tutorial</a>, and
-the extensive free <a href="http://git-scm.com/book/en/v2">Pro Git</a> ebook.
-The remainder of this section describes the steps needed to clone and compile the glitter base code.
-</p>
-</div>
-<div class="col-md-6 text-justify">
-	<h3>Cloning using the command line</h3>
+<div style="margin-top:-20px; text-align:justify">
+	<h2>Goal</h2>
 	<p>
-		The source code of glitter is available on <a
-		href="https://github.com/DrLsimon/glitter">github</a>.
-		To check out a copy of the source code, enter
+    In this tutorial you will complete the file <tt>src/glApi.cpp</tt> in order to
+    be able to render 2d square made up of two triangles. 
+	</p>
+
+  <h2>Useful files</h2>
+  <p>For this tutorial, you will find the following files useful:
+    <ul>
+      <li><tt>src/glApi.hpp</tt></li>
+      <li><tt>src/glApi.cpp</tt></li>
+      <li><tt>shaders/</tt></li>
+      <li><tt>shaders/</tt></li>
+      <li><tt>example/PA1Application.hpp</tt></li>
+      <li><tt>example/PA1Application.cpp</tt></li>
+    </ul>
+  </p>
+
+	<h2>Part 1: Completing the API</h2>
+	<p>
+  For each of the following classes (<code>class Buffer</code>), look
+  at the doxygen documentation in the <tt>src/glApi.hpp</tt> header file and complete
+  the implementation of the class methods in <tt>src/glApi.cpp</tt> so that 
+  their implementation checks with the documentation. 
+
+  The list of classes that you need to complete is here:
+  <ul>
+    <li><code>Buffer</code></li>
+    <li><code>VAO</code></li>
+    <li><code>Shader</code></li>
+    <li><code>Program</code></li>
+  </ul>
+  The remaining classes will be implemented in later assignments.
+	</p>
+	
+	<h3>Part 2: Validation</h3>
+	<p>
+    To verify that your implementation works correctly, you can run:
 	</p>
 <pre class="prettyprint lang-bash">
-$ git clone --single-branch  https://github.com/DrLSimon/glitter
-$ git submodule init
-$ git submodule update --depth=1</pre>
-  <p>
-  on the terminal. The <tt>submodule</tt> commands ensure
-  that all dependency libraries are cloned as well (without their history thanks to the 
-  <tt>--depth=1</tt> flags). The
-  <tt>--single-branch</tt> prevents from fetching the <tt>gh-pages</tt> branch.	
-  </p>
-</div>
+$ ./glitter pa1
+</pre>
 
-<div class="col-md-6 text-justify">
-	<h3>Updating the codebase</h3>
-  <p>
-  We'll likely publish extensions and bug-fixes to this
-  repository as the semester progresses. To get them, 
-  navigate into the <tt>glitter</tt> directory and run the command
-  <pre class="prettyprint lang-bash">
-$ git pull</pre>
-  If there were any concurrent modifications to the same file,
-  <tt>git</tt> may ask you to resolve merge conflicts. We refer you to
-  the learning resources for information about resolving conflicts in
-  general.
-  </p>
-</div>
-<div class="row col-md-12">
-    <div class="alert alert-danger" role="alert"><b>Note</b>: Since your
-        repository will contain homework solutions it is (obviously) not OK to
-        post it online (in particular, don't fork the <tt>glitter</tt> project on
-        github or elsewhere). Private forks (i.e. without public access) are
-        allowed, however.
-	</div>
-</div>
-
-<div class="row col-md-12">
-<h3>Part 2: Setting up a C++ compiler and building the base code</h3>
-<div class="row">
-	<div class="col-md-6">
-		<h3>Configuring on Linux / Mac OS X terminal</h3>
-		<p>
-		Begin by installing the
-		<a href="http://www.cmake.org/download/">CMake</a> build system on your
-		system. On Mac OS X, you will also need to install a reasonably
-		up-to-date version of XCode along with the command line tools.
-		On Linux, any reasonably recent version of GCC or Clang will work.
-		Navigate to the glitter folder, create a build directory and start <tt>cmake</tt>, like so:
-		</p>
-		<pre class="prettyprint lang-bash">
-$ cd path-to-glitter
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release</pre>
-
-		<h3>Building on Linux / Mac OS X terminal</h3>
-		After the Makefiles are generated, simply run
-		<tt>make</tt> to compile all dependencies and glitter itself.
-		<pre class="prettyprint lang-bash">
-$ make -j 4</pre>
-		This can take quite a while; the above command compiles with four
-		processors at the same time. Note that you will probably see many
-		warning messages while the dependencies are compiled—you can ignore
-		them.
-  </div>
-	<div class="col-md-6">
-    <h3>Configuring and building on QtCreator</h3>
-    Start by opening the <tt>CMakeLists.txt</tt> file with QtCreator. Then a 
-    configuration menu will be presented.
-
-    <div class="thumbnail">
-      <a class="fancybox" href="images/qtcreator-config.jpg"><img src="images/qtcreator-config.jpg"/></a>
-      <div class="caption">
-        Simply press <tt>Configure Project</tt> button.
-      </div>
-    </div>
-    
-    Once the project is configured, you can build / run / debug the executables within
-    QtCreator.
-	</div>
-</div>
-
-</div>
-
-<div class="row col-md-12">
-<h3>Part 3: A high-level overview</h3>
-The glitter repository consists of the base code files (left table)
-and several dependency libraries (right table) that are briefly explained below.
-</div>
-<div class="row">
-	<div class="col-md-6">
-		<table class="table table-condensed">
-			<thead> <tr> <th>Directory</th> <th>Description</th> </tr> </thead>
-			<tbody>
-				<tr><td><tt>src</tt></td><td>A directory containing the core C++ source code</td></tr>
-				<tr><td><tt>examples</tt></td><td>A directory containing <b>fixme</b></td></tr>
-				<tr><td><tt>ext</tt></td><td>External dependency libraries (see the table right)</td></tr>
-				<tr><td><tt>shaders</tt></td><td>Several vertex and fragment GLSL files</td></tr>
-				<tr><td><tt>meshes</tt></td><td>Wavefront files and their dependencies (mtl, images)</td></tr>
-				<tr><td><tt>CMakeLists.txt</tt></td><td>A CMake file which specifies how to build glitter</td></tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="col-md-6">
-		<table class="table table-condensed">
-			<thead> <tr> <th>Directory</th> <th>Description</th> </tr> </thead>
-			<tbody>
-				<tr><td><tt>ext/glfw</tt></td><td>A cross-platform window management library</td></tr>
-				<tr><td><tt>ext/glew</tt></td><td>OpenGL extension wrangler library</td></tr>
-				<tr><td><tt>ext/glm</tt></td><td>Header only mathematics library based on the OpenGL Shading Language (GLSL) specifications</td></tr>
-				<tr><td><tt>ext/tinyobjloader</tt></td><td>Tiny but powerful single file wavefront obj loader</td></tr>
-				<tr><td><tt>ext/stb</tt></td><td>Collection of single-file libraries (used for image loading)</td></tr>
-				<tr><td><tt>ext/stb</tt></td><td>header-only library for printing colored messages to the terminal</td></tr>
-			</tbody>
-		</table>
-	</div>
-</div>
-</div>
 </div>
