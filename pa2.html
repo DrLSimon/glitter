@@ -72,15 +72,16 @@ $ ./glitter pa2 </pre>
   Modify both the shader and the C++ function to display a real 3d cube.
 
   <h2>Part 4: Instancing</h2>
-  As you may have noticed, in the current version of the vertex shader, all 3d positions are 
-  defined in the <em>Normalized Devise Coordinates</em> system (NDC). In order to
-  instanciate an object at a given location and with a given pose, we must differentiate
-  between the object coordinates and the NDC ones. Such a transform is often called MVP for
-  <em>Model View Projection</em> tranform. In this part you must define a uniform
-  GLSL matrix (or several if you are willing to decompose the transform).
-  Modify the vertex shader to include the needed MVP matrix and complete the code of 
-  <code class="c++">PA2Application::makeACube</code> and <code class="c++">PA2Application::renderFrame</code>
-  so that the value of the uniform matrix variable is set-up correctly. 
+  As you may have noticed, in the current version of the vertex shader, all 3d
+  positions are defined in the <em>Normalized Devise Coordinates</em> system
+  (NDC). In order to instanciate an object at a given location and with a given
+  pose, we must differentiate between the object coordinates and the NDC ones.
+  Such a transform is often called MVP for <em>Model View Projection</em>
+  tranform. In this part you must define a uniform GLSL matrix (or several if
+  you are willing to decompose the transform).  Modify the vertex shader to
+  include the needed MVP matrix and complete the code of <code
+  class="c++">PA2Application::renderFrame</code> so that the value of the
+  uniform matrix variable is set-up correctly. 
 </div>
 
 
