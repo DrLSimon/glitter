@@ -1,8 +1,8 @@
 <div style="margin-top:-20px; text-align:justify">
   <h2>Goal</h2>
   <p>
-  In this tutorial you will complete the file <tt>src/glApi.cpp</tt> in order to
-  be able to render 2d square made up of two triangles. 
+  In this tutorial you will partly complete the files <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt> in order to
+  be able to render a 2d square made up of two triangles. 
   </p>
 
   <h2>Useful files</h2>
@@ -10,22 +10,28 @@
   <ul>
     <li><tt>src/glApi.hpp</tt></li>
     <li><tt>src/glApi.cpp</tt></li>
+    <li><tt>examples/PA1Application.hpp</tt></li>
+    <li><tt>examples/PA1Application.cpp</tt></li>
     <li><tt>shaders/simple2d.v.glsl</tt></li>
     <li><tt>shaders/simple2d.f.glsl</tt></li>
-    <li><tt>example/PA1Application.hpp</tt></li>
-    <li><tt>example/PA1Application.cpp</tt></li>
   </ul>
   </p>
 
   <div class="row col-md-12">
     <div class="row">
       <div class="col-md-7">
-        <h2>Part 1: Completing the API</h2>
+        <h2>Part 1: Rendering without IBO</h2>
+        <p>
+        In this part you should start by looking at implementation in
+        <tt>examples/PA1Application.cpp</tt> and get familiar with its
+        implementation.  However you will only modify the files named
+        <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt>.
+        </p>
         <p>
         For each of the following classes (<code>class Buffer</code>), look
-        at the doxygen documentation in the <tt>src/glApi.hpp</tt> header file and complete
+        at the doxygen-like documentation in the <tt>src/glApi.hpp</tt> header file and complete
         the implementation of the class methods in <tt>src/glApi.cpp</tt> (or directly in
-        the header for templates) so that their implementation checks with the documentation. 
+        the header for templates) so that their implementation matches with the documentation. 
 
         The list of classes that you need to complete is here:
         <ul>
@@ -34,24 +40,56 @@
           <li><code>Shader</code></li>
           <li><code>Program</code></li>
         </ul>
-        The remaining classes will be implemented in later assignments.
+        Note that some methods of the <code>VAO</code> and <code>Program</code>
+        classes should be completed later on (in part 2 or in other
+        assignments). The remaining classes will be implemented in later
+        assignments. 
         </p>
-        <h2>Part 2: Validation</h2>
+        <h3>Validation</h3>
         <p>
         To verify that your implementation works correctly, you can run:
         </p>
         <pre class="prettyprint lang-bash">
-$ ./glitter pa1 </pre>
+$ ./glitter pa1 1 </pre>
       </div>
       <div class="col-md-5">
         <div class="thumbnail">
           <a class="fancybox" href="images/pa1.png"><img src="images/pa1.png"/></a>
           <div class="caption">
-            Rendering after PA1 completion: a yellow rectangle on white background.
+            Rendering after the first part completion: a yellow rectangle on white background.
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <h2>Part 2: setting up a VAO including an IBO</h2>
+  <p>
+  As you may have noticed, the rendering in part 1 is based on an incomplete
+  <code>class VAO</code>. Indeed, you have not completed yet the following
+  methods
+  <ul>
+    <li><code>VAO::setVBO</code></li>
+    <li><code>VAO::encapsulateVBO</code></li>
+    <li><code>VAO::setIBO</code></li>
+    <li><code>VAO::draw</code></li>
+  </ul>
+  This has two consequences on the <code>PA1Application</code> class:
+  <ol>
+    <li>some openGL calls are directly invoked in the code of <code>PA1Application</code> class</li>
+    <li>no IBO was used, and therefore the draw call is <code>glDrawArrays</code> instead of <code>glDrawElements</code> and besides, some vertex positions are duplicated in the VBO</li>
+  </ol>
+  </p>
+
+  <h3>Implementation</h3>
+  <p>To complete this part of the tutorial, you must complete the missing implementations of the <code>VAO</code> class. Note that for the VBO encapsulation, you can look at the openGL direct invocations in <code>class PA1Application</code>. However, the draw call shall be different since you will use the IBO encapsulated in the VAO.
+  </p>
+
+  <h3>Validation</h3>
+  <p>
+  To verify that your implementation works correctly, you can run:
+  </p>
+  <pre class="prettyprint lang-bash">
+$ ./glitter pa1 2 </pre>
+  The rendering should be identical to Part 1.
 </div>
