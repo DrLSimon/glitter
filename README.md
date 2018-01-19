@@ -10,7 +10,7 @@ introducing to the basics of OpenGL. The slides are available here:
 
 # Documentation
 The list of tutorials is described in detail in the [web site](https://drlsimon.github.io/glitter/).
-The doxygen documentation is available [here](http://www.ecole.ensicaen.fr/~simonl/files/OpenGL/glitter-doc/annotated.html)
+The doxygen documentation is available [here](http://www.ecole.ensicaen.fr/~simonl/files/OpenGL/glitter-doc/annotated.html).
 
 # Requirements
 The project relies on the following dependencies
@@ -18,6 +18,9 @@ The project relies on the following dependencies
 * OpenGL 4.1
 * GLFW 3.0
 * GLM 0.9.2
+* [tinyobjloader](https://github.com/syoyo/tinyobjloader)
+* [stb](https://github.com/nothings/stb)
+* [termcolor](https://github.com/ikalnitsky/termcolor)
 
 
 # Instructions
