@@ -22,6 +22,8 @@ The project relies on the following dependencies
 * [stb](https://github.com/nothings/stb)
 * [termcolor](https://github.com/ikalnitsky/termcolor)
 
+**Note:** Missing dependencies will be automatically added as git submodules.
+
 
 # Instructions
 ## Building
