@@ -1,0 +1,10 @@
+#ignore backup files
+.DS_Store
+*~
+*#
+build/*
+*.swp
+*.swo
+
+
+CMakeLists.txt.user

@@ -1,0 +1,40 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+UseTab: Never
+BreakBeforeBraces: Linux
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+ColumnLimit: 200
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackParameters: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: false
+  AfterUnion: true
+#  AfterExtern: true
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+#SplitEmptyFunction: true
+#SplitEmptyRecord: true
+#SplitEmptyNamespace: true
+#IncludeBlocks: Merge
+IncludeCategories:
+  - Regex:           '^<.*'
+    Priority:        1
+  - Regex:           '^".*'
+    Priority:        2
+#  - Regex:           '.*'
+#    Priority:        1
+---
+Language: Cpp
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Middle

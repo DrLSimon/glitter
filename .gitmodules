@@ -1,0 +1,18 @@
+[submodule "ext/tinyobjloader"]
+	path = ext/tinyobjloader
+	url = https://github.com/syoyo/tinyobjloader.git
+[submodule "ext/stb"]
+	path = ext/stb
+	url = https://github.com/nothings/stb
+[submodule "ext/termcolor"]
+	path = ext/termcolor
+	url = https://github.com/ikalnytskyi/termcolor
+[submodule "ext/glew"]
+	path = ext/glew
+	url = https://github.com/DrLSimon/glew
+[submodule "ext/glfw"]
+	path = ext/glfw
+	url = https://github.com/DrLSimon/glfw
+[submodule "ext/glm"]
+	path = ext/glm
+	url = https://github.com/DrLSimon/glm

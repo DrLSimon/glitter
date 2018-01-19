@@ -1,0 +1,14 @@
+Credits.txt
+-----------
+
+bricks_color_map.jpg:
+- Created using Genetica Viewer 2.5
+- http://www.spiralgraphics.biz/viewer/index.htm
+
+bricks_normal_map.jpg:
+- Created using Crazybump Beta Test 5.3
+- http://www.crazybump.com/
+
+cube.obj cube.mtl:
+- Created and exported from Softimage XSI 6.02
+- http://www.softimage.com/
