@@ -58,16 +58,13 @@ target_link_libraries(glitter utils ${GLFW3_LIBRARIES} ${GLEW_LIBRARIES})
 # |  Doxygen Generation                                              |
 # +------------------------------------------------------------------+
 
-option(GLITTER_BUILD_DOCUMENTATION "Build the Doxygen documentation" OFF)
-if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
-  set(GLITTER_BUILD_DOCUMENTATION ON)
-endif()
+option(GLITTER_BUILD_DOCUMENTATION "Build the Doxygen documentation" ON)
 if (GLITTER_BUILD_DOCUMENTATION)
   find_package(Doxygen)
   if (GLITTER_BUILD_DOCUMENTATION AND DOXYGEN_FOUND)
     configure_file(${GLITTER_SOURCE_DIR}/docs/Doxyfile.in
       ${GLITTER_BINARY_DIR}/docs/Doxyfile @ONLY)
-    add_custom_target( doc_doxygen ALL
+    add_custom_target( doc_doxygen
       COMMAND ${DOXYGEN_EXECUTABLE} ${GLITTER_BINARY_DIR}/docs/Doxyfile
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating API documentation with Doxygen"
