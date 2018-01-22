@@ -64,8 +64,8 @@ int main(int argc, char * argv[])
     exit(0);
   } else if (!strcmp(argv[1], "pa1")) {
     unsigned int part = 1;
-    if (argc >= 2) {
-      part = atoi(argv[1]);
+    if (argc >= 3) {
+      part = atoi(argv[2]);
     }
     app = new PA1Application(640, 480, part);
   } else if (!strcmp(argv[1], "pa2")) {
