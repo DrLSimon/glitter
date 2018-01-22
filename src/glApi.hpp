@@ -74,7 +74,12 @@ public:
    * @brief Sends data to the GPU location attached to this instance.
    * @param values the data to be sent
    *
-   * @note PA1: As a side effect this method must store the formatting
+   * @note PA1: This function send the @p values to the GPU location
+   * attched to this instance. To do so, you must:
+   *   - bind this Buffer
+   *   - call ::glBufferData with the correct parameters
+   *   - unbind this instance
+   * As a side effect this method must store the formatting
    * of the buffer:
    *	- total number of attributes
    *	- number of component per attribute

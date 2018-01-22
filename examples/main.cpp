@@ -33,7 +33,7 @@ void printUsage(int argc, char * argv[])
               << "print usage (of other commands if specified in <args>)\n"
               << "  pa1         " << pa1ShortDescription << "\n"
               << "  pa2         " << pa2ShortDescription << "\n"
-              << "  pa3         " << pa1ShortDescription << "\n";
+              << "  pa3         " << pa3ShortDescription << "\n";
   } else {
     std::string name = argv[2];
     std::string shortDescription;
