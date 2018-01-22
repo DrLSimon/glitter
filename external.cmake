@@ -17,6 +17,7 @@ if(NOT GLFW3_FOUND)
     checkLocalDependency(ext/glfw)
     add_subdirectory(ext/glfw)
     include_directories(ext/glfw/include)
+    set(GLFW3_LIBRARIES glfw)
 endif()
 
 # glew
