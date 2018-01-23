@@ -283,6 +283,7 @@ public:
    * 	- allocate the GPU memory for the program
    * 	- attach the fragment and vertex shaders
    * 	- link the program
+   * 	- detach the fragment and vertex shaders (so they can be deleted)
    */
   Program(const std::string & vname, const std::string & fname);
 
