@@ -4,7 +4,7 @@
   In this assignment, you will have two goals:
   <ul>
     <li>Learn how to use uniform variables in GLSL programs</li>
-    <li>Going to 3D by using the standart transform pipeline from <em>object coordinates</em> to 
+    <li>Going to 3D by using the standard transform pipeline from <em>object coordinates</em> to 
       <em>normalized device coordinates (NDC)</em></li>
   </ul>
   </p>
@@ -46,7 +46,7 @@ git pull https://github.com/DrLSimon/glitter
           </li>
         </ul>
         </p>
-        <h2>Part 2: Validation</h2>
+        <h3>Validation</h3>
         <p>
         To verify that your implementation works correctly, you can run:
         </p>
@@ -64,24 +64,68 @@ $ ./glitter pa2 </pre>
     </div>
   </div>
 
-  <h2>Part 3: Going to 3D</h2>
+  <h2>Part 2: Going to 3D</h2>
 
-  Look at the code of <code class="c++">PA2Application::makeACube</code> and notice that the VAO
-  corresponds truely to a simple square. Besides the vertex shader <tt>shaders/simple3d.v.glsl</tt>
-  is reading a 2d input attribute per vertex <code class="glsl">in vec2 vertexPosition</code>. 
-  Modify both the shader and the C++ function to display a real 3d cube.
+  <p>
+  Look at the code of <code class="c++">PA2Application::makeACube</code> and
+  notice that the VAO corresponds truely to a simple square. Besides the vertex
+  shader <tt>shaders/simple3d.v.glsl</tt> is reading a 2d input attribute per
+  vertex <code class="glsl">in vec2 vertexPosition</code>.  Modify both the
+  shader and the C++ function to display a real 3d cube. 
+  </p>
+  <p>
+  Right now, the cube being aligned with the retinal plane of the camera, it
+  will not appear different from a square. Therefore your rendering should be
+  similar to part 1.
+  </p>
 
-  <h2>Part 4: Instancing</h2>
+  <div class="row col-md-12">
+    <div class="row">
+      <div class="col-md-7">
+  <h2>Part 3: Instancing</h2>
+  <p>
   As you may have noticed, in the current version of the vertex shader, all 3d
   positions are defined in the <em>Normalized Devise Coordinates</em> system
   (NDC). In order to instanciate an object at a given location and with a given
   pose, we must differentiate between the object coordinates and the NDC ones.
   Such a transform is often called MVP for <em>Model View Projection</em>
-  tranform. In this part you must define a uniform GLSL matrix (or several if
+  tranform.
+  </p>
+
+  <p>
+  In this part you must define a uniform GLSL matrix (or several if
   you are willing to decompose the transform).  Modify the vertex shader to
-  include the needed MVP matrix and complete the code of <code
-  class="c++">PA2Application::renderFrame</code> so that the value of the
-  uniform matrix variable is set-up correctly. 
+  include the needed MVP matrix. 
+  </p>
+                                                   
+  <p>
+  You should also complete the code of <code class="c++">PA2Application::renderFrame</code> so
+  that the value of the uniform matrix variable is set-up correctly. In fact, if you 
+  look at the current implementation, you will notice that the VAO is rendered
+  twice, but without any change in between the two draw calls. Your goal is to 
+  set up the <code>MVP</code> uniform matrix in order to change the scale, orientation
+  and location of the object differently for the two draw calls, so that the two
+  cube instances appear with separate poses.
+  </p>
+
+  <p>
+  In order to obtain rotating cubes (like in the figure), you should use
+  the current time (<code>m_currentTime</code>) in order to update the orientation
+  of the cubes as time goes.
+  </p>
+
+  </div>
+      <div class="col-md-5">
+        <div class="thumbnail">
+          <a class="fancybox" href="images/pa2_3.gif"><img src="images/pa2_3.gif"/></a>
+          <div class="caption">
+            Rendering after third part completion: two rotating instances of a cube.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
