@@ -17,20 +17,29 @@ private:
   /**
    * @brief creates a VAO corresponding to a 3d cube.
    *
-   * The VAO is composed of a single VBO corresponding the the
-   * geometric 3d position of the vertices.
+   * The VAO is composed of a two VBOs corresponding the
+   * geometric 3d position and the color of the vertices.
    *
    * @note PA2 this function currently implements a 2d square VAO. You must
-   * change it to create a 3d cube.
+   * change it to create a 3d cube. Besides you will strive to assign
+   * a given color per face (i.e. the six following colors: red, green, blue, yellow, magenta, and cyan).
+   * To do so you will need to modify the two VBOs and the IBO.
    */
   void makeA3dCube();
 
   /**
    * @brief renders a frame
    *
-   * @note PA2 this function is currently incomplete. A local variable called @p mvp
-   * is created but the code to send the corresponding values to the GLSL program is
-   * missing.
+   * @note PA2 this function is currently incomplete. Currently the VAO is rendered twice
+   * but nothing changes between the two draw calls. In order to instanciate the VAO in two
+   * different location, you should
+   * 	- create a MVP matrix
+   * 	- set it in a first configuration
+   * 	- send its values to the corresponding uniform of the GLSL program (@p m_program)
+   * 	- do the first draw call
+   * 	- set the MVP matrix in a second configuration
+   * 	- send its values to the corresponding uniform
+   * 	- do the second draw call
    */
   void renderFrame() override;
 
@@ -41,6 +50,7 @@ private:
 private:
   VAO m_vao;
   Program m_program;
+  float m_currentTime;
 };
 
 #endif // !defined(__PA2_APPLICATION_H__)
