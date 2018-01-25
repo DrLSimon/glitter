@@ -1,33 +1,78 @@
 <div style="margin-top:-20px; text-align:justify">
   <h2>Goal</h2>
   <p>
-  TODO
-  </p>
-
-  <h2>Useful files</h2>
-  <p>For this tutorial, you will find the following files useful:
+  In this assignment, you will have two goals:
   <ul>
-    <li><tt>TODO</tt></li>
+    <li>Learn how to generate 3D mesh approximation of parametric surfaces</li>
+    <li>Handle intra and inter object occlusions</li>
   </ul>
   </p>
-
   <p>
   As usual, begin by importing the latest base code updates into your
   repository by running
   </p>
 <pre class="prettyprint lang-bash">
-git pull https://github.com/DrLSimon/glitter
+git pull
 </pre>
 
-  <h2>Part 1: TODO</h2>
-  <p>TODO</p>
-  <h2>Part 2: Validation</h2>
+  <h2>Useful files</h2>
+  <p>For this tutorial, you will find the following files useful:
+  <ul>
+  </ul>
+  <li><tt>examples/PA3Application.hpp</tt></li>
+  <li><tt>examples/PA3Application.cpp</tt></li>
+  </p>
+
+  <div class="row col-md-12">
+    <div class="row">
+      <div class="col-md-7">
+        <h2>Part 1: Parametric surface</h2>
+        <p>In this part you will need to implement the two methods named <code>PA3Application::makeASphere</code>
+        and <code>PA3Application::makeATorus</code>.
+
+        To help you in this tasks, here is a coarse algorithmic skeleton for discretizing
+        a surface parametrized as $P(\phi,\theta)$.
+        </p>
+<pre>
+$points \leftarrow \emptyset$
+$faces \leftarrow \emptyset$
+for $k_\phi\in\{0,\cdots,n-1\}$ do
+  for $k_\theta\in\{0,\cdots,n-1\}$ do
+    $\phi=\phi_0+k_\phi\delta_\phi$
+    $\theta=\theta_0+k_\theta\delta_\theta$
+    $points \leftarrow  points \cup \{ P(\phi,\theta)\}$
+    if ($k_\phi\leq n-2$ or isCyclicInPhi) and ($k_\phi\leq n-2$ or isCyclicInTheta) then
+      # $1^\text{st}$ triangle
+      $faces \leftarrow faces \cup \{\mathrm{index}(k_\phi, k_\theta), \mathrm{index}(k_\phi+1,k_\theta), \mathrm{index}(k_\phi,k_\theta+1)\}$   
+      # $2^\text{nd}$ triangle
+      $faces \leftarrow faces \cup \{\mathrm{index}(k_\phi,k_\theta+1), \mathrm{index}(k_\phi+1,k_\theta), \mathrm{index}(k_\phi+1,k_\theta+1)\}$
+    fi
+  done
+done
+</pre>
+In this algorithm, $\mathrm{index}(k_\phi, k_\theta)$ is the index location of $P(\phi,\theta)$ in the list of points.
+<b>Beware</b> its definition at the "boundaries" : for instance in the sphere example, the index
+behaviour is cyclic with respect to $\phi$ but not with respect to $\theta$, that is to say: $P(2\pi, \theta)=P(0,\theta)$ but
+$P(\phi,\frac \pi 2) \neq P(\phi,-\frac \pi 2)$. This cyclic / non cyclic behaviour is denoted by the boolean expressions: <tt>isCyclicInPhi</tt>
+and <tt>isCyclicInTheta</tt>.
+      </div>
+      <div class="col-md-5">
+        <div class="thumbnail">
+          <a class="fancybox" href="images/sphereParam.png"><img src="images/sphereParam.png"/></a>
+          <div class="caption">
+            Sphere discretization example
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Validation</h3>
   <p>
   To verify that your implementation works correctly, you can run:
   </p>
   <pre class="prettyprint lang-bash">
-$ ./glitter pa3
-  </pre>
+$ ./glitter pa3 </pre>
 
 </div>
 

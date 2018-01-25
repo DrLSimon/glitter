@@ -186,7 +186,14 @@
       </script>
       <script src="js/cgi.js"></script>
       <script type="text/x-mathjax-config">
-MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+MathJax.Hub.Config({
+tex2jax: {
+  inlineMath: [['$','$'], ['\\(','\\)']],
+  skipTags: ["script","noscript","style","textarea"],
+  processEscapes: true
+},
+TeX: { extensions: ["color.js"] },
+});
       </script>
 
   </body>
