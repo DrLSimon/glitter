@@ -36,24 +36,24 @@ git pull
 <pre>
 $points \leftarrow \emptyset$
 $faces \leftarrow \emptyset$
-for $k_\phi\in\{0,\cdots,n-1\}$ do
-  for $k_\theta\in\{0,\cdots,n-1\}$ do
+<span style="color:DarkBlue">for</span> $k_\phi\in\{0,\cdots,n-1\}$ <span style="color:DarkBlue">do</span>
+  <span style="color:DarkBlue">for</span> $k_\theta\in\{0,\cdots,n-1\}$ <span style="color:DarkBlue">do</span>
     $\phi=\phi_0+k_\phi\delta_\phi$
     $\theta=\theta_0+k_\theta\delta_\theta$
     $points \leftarrow  points \cup \{ P(\phi,\theta)\}$
-    if ($k_\phi\leq n-2$ or isCyclicInPhi) and ($k_\phi\leq n-2$ or isCyclicInTheta) then
-      # $1^\text{st}$ triangle
+    <span style="color:DarkBlue">if</span> ($k_\phi\leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInPhi) <span style="color:DarkBlue">and</span> ($k_\phi\leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInTheta) <span style="color:DarkBlue">then</span>
+      <span style="color:#546a2f"># $1^\text{st}$ triangle</span>
       $faces \leftarrow faces \cup \{\mathrm{index}(k_\phi, k_\theta), \mathrm{index}(k_\phi+1,k_\theta), \mathrm{index}(k_\phi,k_\theta+1)\}$   
-      # $2^\text{nd}$ triangle
+      <span style="color:#546a2f"># $2^\text{nd}$ triangle</span>
       $faces \leftarrow faces \cup \{\mathrm{index}(k_\phi,k_\theta+1), \mathrm{index}(k_\phi+1,k_\theta), \mathrm{index}(k_\phi+1,k_\theta+1)\}$
-    fi
-  done
-done
+    <span style="color:DarkBlue">endif</span>
+  <span style="color:DarkBlue">done</span>
+<span style="color:DarkBlue">done</span>
 </pre>
 In this algorithm, $\mathrm{index}(k_\phi, k_\theta)$ is the index location of $P(\phi,\theta)$ in the list of points.
-<b>Beware</b> its definition at the "boundaries" : for instance in the sphere example, the index
-behaviour is cyclic with respect to $\phi$ but not with respect to $\theta$, that is to say: $P(2\pi, \theta)=P(0,\theta)$ but
-$P(\phi,\frac \pi 2) \neq P(\phi,-\frac \pi 2)$. This cyclic / non cyclic behaviour is denoted by the boolean expressions: <tt>isCyclicInPhi</tt>
+<b>Beware</b> its definition at the "boundaries" : for instance in the sphere example, the parametrization
+is cyclic with respect to $\phi$ but not with respect to $\theta$, that is to say: $P(2\pi, \theta)=P(0,\theta)$ but
+$P(\phi, \pi) \neq P(\phi, 0)$. This cyclic / non cyclic behaviour is denoted by the boolean expressions: <tt>isCyclicInPhi</tt>
 and <tt>isCyclicInTheta</tt>.
       </div>
       <div class="col-md-5">
