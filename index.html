@@ -73,17 +73,23 @@
           <p>
           While glitter provides much support code to simplify your development
           work as much as possible, the code that you will initially receive
-          from us does very little: <b>fixme</b> complete this.
-
-          Your task will be to extend this system to a full-fledged physically-based
-          renderer as part of programming assignments and your final project.
+          from us does very little: it initializes an openGL context 
+          and launches a main loop. What is lacking is the actual OpenGL routine calls
+          (state variable, and openGL settings, draw call, etc.). 
+          </p>
+          <p>
+          Your task will precisely be to extend this system to a full-fledged OpenGL
+          renderer as part of programming assignments and your final project. To do so,
+          you are going to implement classes that are very simple facades to basic OpenGL
+          objects (Buffers, VAO, Shaders, ...). More sophisticated abstraction have been
+          discarded on purpose for pedagogical reasons.
           </p>
           <h2>Core features</h2>
           The glitter base code provides a few features that would be tedious
           to implement from scratch. The following features are included:
           <ul>
-            <li>Window management (glfw)</li>
-            <li>OpenGL context initialization (glew and glfw)</li>
+            <li>Window management  and context initialization (glfw)</li>
+            <li>OpenGL entrypoints loading library (glew)</li>
             <li>Basic matrix vector algebra (glm)</li>
             <li>A loader for Wavefront OBJ files (tinyobjloader)</li>
           </ul>
@@ -105,10 +111,11 @@
 
           <h3>References</h3>
           <p>
-          You may find the following general references useful: <b>fixme</b>
+          You may find the following general references useful: 
           <ul>
-            <li>"<em><a href="http://www.pbrt.org/">Physically Based Rendering, Third Edition: From Theory To Implementation</a></em>" by Matt Pharr, Wenzel Jakob, Greg Humphreys. Morgan Kaufmann.</li>
-            <li>"<em><a href="http://graphics.stanford.edu/papers/veach_thesis/">Robust Monte Carlo Methods for Light Transport Simulation</a></em>", PhD Thesis by Eric Veach, Stanford University, December 1997.</li>
+            <li>"<em><a href='http://www.openglsuperbible.com/' target='_blamk'>OpenGL SuperBible (7th Edition)</a></em> " by Richard S. Wright, Jr. Nicholas Haemel Graham Sellers Benjamin Lipchak.</li>
+            <li>"<em><a href='http://openglbook.com/the-book.html' target='_blank'> OpenGLBook.com </a></em> " by Eddy Luten</li>
+            <li>"<em><a href='http://www.arcsynthesis.org/gltut/index.html' target='_blank'> Learning Modern 3D Graphics Programming </a></em>" by Jason L. McKesson</li>
           </ul>
           </p>
         </div>
