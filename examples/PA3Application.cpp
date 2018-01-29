@@ -8,38 +8,60 @@
 #include "utils.hpp"
 
 PA3Application::PA3Application(int windowWidth, int windowHeight)
-    : Application(windowWidth, windowHeight, "Application for PA3"), m_program("shaders/simple3d.v.glsl", "shaders/simple3d.f.glsl"), m_proj(1)
+    : Application(windowWidth, windowHeight, "Application for PA3"), m_program("shaders/simple3d.v.glsl", "shaders/simple3d.f.glsl"), m_proj(1), m_currentTime(0), m_deltaTime(0)
 {
+  initGLState();
   makeASphere(100, 100);
   makeATorus(100, 100, 0.25);
 }
 
 void PA3Application::makeASphere(unsigned int nbPhi, unsigned int nbTheta)
 {
-  std::shared_ptr<VAO> vao(new VAO(1));
+  std::vector<glm::vec3> positions;
+  std::vector<glm::vec3> colors;
+  std::vector<uint> ibo;
   std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
+  assert(false);
 
+  std::shared_ptr<VAO> vao(new VAO(2));
+  vao->setVBO(0, positions);
+  vao->setVBO(1, colors);
+  vao->setIBO(ibo);
   glm::mat4 mv(1);
   m_vaos.push_back(InstancedVAO::createInstance(vao, mv, m_proj));
 }
 
 void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float smallRadius)
 {
-  std::shared_ptr<VAO> vao(new VAO(1));
+  std::vector<glm::vec3> positions;
+  std::vector<glm::vec3> colors;
+  std::vector<uint> ibo;
   std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
+  assert(false);
 
+  std::shared_ptr<VAO> vao(new VAO(2));
+  vao->setVBO(0, positions);
+  vao->setVBO(1, colors);
+  vao->setIBO(ibo);
   glm::mat4 mv(1);
   mv = glm::translate(mv, {0.5, 0, 0});
-  mv = glm::rotate(mv, glm::pi<float>() / 4, {0, 0, 1});
+  mv = glm::rotate(mv, 3 * glm::pi<float>() / 4, {1, 0, 1});
   m_vaos.push_back(InstancedVAO::createInstance(vao, mv, m_proj));
+}
+
+void PA3Application::initGLState() const
+{
+  glClearColor(1, 1, 1, 1);
+  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
 }
 
 void PA3Application::renderFrame()
 {
-  glClearColor(1, 1, 1, 1);
+  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
   glClear(GL_COLOR_BUFFER_BIT);
   m_program.bind();
   for (const auto & vao : m_vaos) {
+    vao->rotate(m_deltaTime, {1, 0, 1});
     vao->updateProgram(m_program);
     vao->draw();
   }
@@ -48,9 +70,11 @@ void PA3Application::renderFrame()
 
 void PA3Application::update()
 {
-  float current_time = glfwGetTime();
+  float prevTime = m_currentTime;
+  m_currentTime = glfwGetTime();
+  m_deltaTime = m_currentTime - prevTime;
   m_program.bind();
-  m_program.setUniform("time", current_time);
+  m_program.setUniform("time", m_currentTime);
   m_program.unbind();
 }
 
@@ -88,4 +112,9 @@ void PA3Application::InstancedVAO::draw() const
 void PA3Application::InstancedVAO::updateProgram(Program & prog) const
 {
   prog.setUniform("MVP", m_mvp);
+}
+
+void PA3Application::InstancedVAO::rotate(float angle, const glm::vec3 & axis)
+{
+  m_mvp = glm::rotate(glm::mat4(1), angle, axis) * m_mvp;
 }

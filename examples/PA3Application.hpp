@@ -20,7 +20,7 @@ private:
     InstancedVAO(const InstancedVAO &) = delete;
 
     /**
-     * @brief
+     * @brief creates an instance from a vao and modelView matrix
      * @param vao  the VAO to be instanciated
      * @param modelView the matrix transform between the object (a.k.a model) space and the camera (a.k.a view) space
      * @param proj the projection matrix
@@ -38,6 +38,8 @@ private:
      * @param prog the target program
      */
     void updateProgram(Program & prog) const;
+
+    void rotate(float angle, const glm::vec3 & axis);
 
   private:
     InstancedVAO(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView, const glm::mat4 & proj);
@@ -77,6 +79,20 @@ private:
    */
   void makeATorus(unsigned int nbPhi, unsigned int nbTheta, float smallRadius);
 
+  /**
+   * @brief initialize OpenGL state variables
+   *
+   * @note PA3 this function is currently incomplete. You need to
+   * activate the back face culling and the depth test.
+   */
+  void initGLState() const;
+
+  /**
+   * @brief renders a frame
+   *
+   * @note PA3 this function is currently incomplete. You need to
+   * clear the depth buffer at the beginning of the frame rendering.
+   */
   void renderFrame() override;
   void update() override;
   static void resize(GLFWwindow * window, int framebufferWidth, int framebufferHeight);
@@ -85,6 +101,8 @@ private:
   std::vector<std::shared_ptr<InstancedVAO>> m_vaos;
   Program m_program;
   glm::mat4 m_proj;
+  float m_currentTime;
+  float m_deltaTime;
 };
 
 #endif // !defined(__PA3_APPLICATION_H__)
