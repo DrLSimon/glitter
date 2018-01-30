@@ -167,7 +167,12 @@ void PA3Application::usage(std::string & shortDescritpion, std::string & synopsi
 {
   shortDescritpion = "Application for programming assignment 3";
   synopsis = "pa3";
-  description = "  An application for rendering parametric surfaces (sphere, torus, ...).\n";
+  description = "  An application for rendering parametric surfaces (sphere, torus, ...) and handling occlusion.\n"
+                "  The following key bindings are available to interact with thi application:\n"
+                "     L                toggle between solid and wireframe rendering\n"
+                "     <up> / <down>    rotate the view around the horizontal axis\n"
+                "     <left> / <right> rotate the view around the vertical axis\n"
+                "     R                reset the view\n";
 }
 
 PA3Application::InstancedVAO::InstancedVAO(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld) : m_vao(vao), m_mw(modelWorld) {}

@@ -101,7 +101,7 @@ private:
    * geometric 3d position and the color of the vertices. The torus is
    * centered and has a big circle radius of one unit.
    *
-   * @note PA3 this function is currently incomplete. You need to
+   * @note PA3 (part 2) this function is currently incomplete. You need to
    * complete the creation of the VAO (VBO and IBO). To do so, you can
    * adapt the definition of makeASphere(). You mainly need to define
    * correctly the 3d position function and the cyclic behaviour.
@@ -123,7 +123,7 @@ private:
   /**
    * @brief initialize OpenGL state variables
    *
-   * @note PA3 this function is currently incomplete. You need to
+   * @note PA3 (part 3) this function is currently incomplete. You need to
    * activate the back face culling and the depth test.
    */
   void initGLState() const;
@@ -131,7 +131,7 @@ private:
   /**
    * @brief renders a frame
    *
-   * @note PA3 this function is currently incomplete. You need to
+   * @note PA3 (part 3) this function is currently incomplete. You need to
    * clear the depth buffer at the beginning of the frame rendering.
    */
   void renderFrame() override;
