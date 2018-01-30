@@ -51,6 +51,7 @@ void Application::initOGLContext(int windowWidth, int windowHeight, const char *
     shutDown(1);
   }
   glfwMakeContextCurrent(window);
+  glfwSetWindowUserPointer(window, this);
 
   /* GLEW Initialization */
   // Do not forget to use glewExperimental so that glewInit works with core

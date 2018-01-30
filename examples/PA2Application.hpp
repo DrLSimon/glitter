@@ -7,6 +7,7 @@
 // forward declarations
 struct GLFWwindow;
 
+/// A concrete implementation of Application for PA1
 class PA2Application : public Application {
 public:
   PA2Application(int windowWidth, int windowHeight);
@@ -20,7 +21,7 @@ private:
    * The VAO is composed of a two VBOs corresponding the
    * geometric 3d position and the color of the vertices.
    *
-   * @note PA2 this function currently implements a 2d square VAO. You must
+   * @note PA2 (part 2) this function currently implements a 2d square VAO. You must
    * change it to create a 3d cube. Besides you will strive to assign
    * a given color per face (i.e. the six following colors: red, green, blue, yellow, magenta, and cyan).
    * To do so you will need to modify the two VBOs and the IBO.
@@ -30,7 +31,7 @@ private:
   /**
    * @brief renders a frame
    *
-   * @note PA2 this function is currently incomplete. Currently the VAO is rendered twice
+   * @note PA2 (part 3) this function is currently incomplete. Currently the VAO is rendered twice
    * but nothing changes between the two draw calls. In order to instanciate the VAO in two
    * different location, you should
    * 	- create a MVP matrix

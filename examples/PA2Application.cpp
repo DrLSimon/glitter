@@ -50,7 +50,6 @@ void PA2Application::setCallbacks()
 {
   GLFWwindow * window = glfwGetCurrentContext();
   glfwSetFramebufferSizeCallback(window, PA2Application::resize);
-  glfwSetWindowUserPointer(window, this);
 }
 
 void PA2Application::usage(std::string & shortDescritpion, std::string & synopsis, std::string & description)

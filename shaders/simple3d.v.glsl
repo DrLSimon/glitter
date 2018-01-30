@@ -1,6 +1,6 @@
 #version 410
 /** @note PA2: In this shader you should change the first attribute to be 3d instead of 2d.
- * Then you shall add a uniform MVP matrix and use it in the standard way.
+ * Then (in part 3) you shall add a uniform MVP matrix and use it in the standard way.
  */
 
 // ins (inputs)
