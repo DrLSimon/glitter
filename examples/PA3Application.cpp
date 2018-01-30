@@ -184,7 +184,9 @@ std::shared_ptr<PA3Application::InstancedVAO> PA3Application::InstancedVAO::crea
 
 void PA3Application::InstancedVAO::draw(GLenum mode) const
 {
-  m_vao->draw(mode);
+  if (m_vao) {
+    m_vao->draw(mode);
+  }
 }
 
 void PA3Application::InstancedVAO::updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view) const
