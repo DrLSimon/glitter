@@ -26,9 +26,9 @@ git pull
   <div class="row col-md-12">
     <div class="row">
       <div class="col-md-7">
-        <h2>Part 1: Parametric surface</h2>
-        <p>In this part you will need to implement the two methods named <code>PA3Application::makeASphere</code>
-        and <code>PA3Application::makeATorus</code>.
+        <h2>Part 1: Parametric surface generic routine</h2>
+        <p>In this part you will need to implement the two methods named <code>PA3Application::makeParamSurf</code>.
+        
 
         To help you in this tasks, here is a coarse algorithmic skeleton for discretizing
         a surface parametrized as $P(\phi,\theta)$.
@@ -41,7 +41,7 @@ $faces \leftarrow \emptyset$
     $\phi=\phi_0+k_\phi\delta_\phi$
     $\theta=\theta_0+k_\theta\delta_\theta$
     $points \leftarrow  points \cup \{ P(\phi,\theta)\}$
-    <span style="color:DarkBlue">if</span> ($k_\phi\leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInPhi) <span style="color:DarkBlue">and</span> ($k_\phi\leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInTheta) <span style="color:DarkBlue">then</span>
+    <span style="color:DarkBlue">if</span> ($k_\phi\leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInPhi) <span style="color:DarkBlue">and</span> ($k_\theta \leq n-2$ <span style="color:DarkBlue">or</span> isCyclicInTheta) <span style="color:DarkBlue">then</span>
       <span style="color:#546a2f"># $1^\text{st}$ triangle</span>
       $faces \leftarrow faces \cup \{\mathrm{index}(k_\phi, k_\theta), \mathrm{index}(k_\phi+1,k_\theta), \mathrm{index}(k_\phi,k_\theta+1)\}$   
       <span style="color:#546a2f"># $2^\text{nd}$ triangle</span>
@@ -51,7 +51,7 @@ $faces \leftarrow \emptyset$
 <span style="color:DarkBlue">done</span>
 </pre>
 In this algorithm, $\mathrm{index}(k_\phi, k_\theta)$ is the index location of $P(\phi,\theta)$ in the list of points.
-<b>Beware</b> its definition at the "boundaries" : for instance in the sphere example, the parametrization
+<b>Beware</b> its definition at the "boundaries" of cyclic surfaces: for instance in the sphere example, the parametrization
 is cyclic with respect to $\phi$ but not with respect to $\theta$, that is to say: $P(2\pi, \theta)=P(0,\theta)$ but
 $P(\phi, \pi) \neq P(\phi, 0)$. This cyclic / non cyclic behaviour is denoted by the boolean expressions: <tt>isCyclicInPhi</tt>
 and <tt>isCyclicInTheta</tt>.
@@ -71,8 +71,30 @@ and <tt>isCyclicInTheta</tt>.
   <p>
   To verify that your implementation works correctly, you can run:
   </p>
-  <pre class="prettyprint lang-bash">
+<pre class="prettyprint lang-bash">
 $ ./glitter pa3 </pre>
+
+  You may also use the <b>arrow keys</b> of the keyboard to rotate the view, and observe the objects <b>under different viewpoints</b>. A more
+  comprehensive description of the possible interactions can be obtained by running:
+<pre class="prettyprint lang-bash">
+$ ./glitter help pa3 </pre>
+
+  <h2>Part 2: Torus</h2>
+  Complete the code of <code>PA3Application::makeATorus</code> to instantiate a torus. You can get inspiration from
+  <code>PA3Application::makeASphere</code>.
+
+  <h2>Part 3: Occlusions </h2>
+  <p>
+  The rendering of your parametric surface should currently look slightly odd, because inner faces 
+  are sometimes rendered on top of outer faces. To solve this issue, you should activate <em>back-face culling</em>.
+  </p>
+
+  <p> As you should notice, back-face culling is not well adapted for open surfaces (e.g. the snail shell shape). 
+  Besides, it is not sufficient to handle intra-object occlusion when an object is not
+  convex (e.g. a torus) let alone to handle inter-object occlusions. To fix this flaw, you should
+  activate the Z-test.
+  </p>
+        
 
 </div>
 
