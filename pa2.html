@@ -73,6 +73,8 @@ $ ./glitter pa2
   shader <tt>shaders/simple3d.v.glsl</tt> is reading a 2d input attribute per
   vertex <code class="glsl">in vec2 vertexPosition</code>.  Modify both the
   shader and the C++ function to display a real 3d cube. 
+  <b>Note:</b> to simplify the construction of the IBO, you should enter the vertices
+  of the cube by chunks of 4 (that is to say one face at a time).
   </p>
   <p>
   Right now, the cube being aligned with the retinal plane of the camera, it

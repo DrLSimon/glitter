@@ -1,13 +1,17 @@
 <div style="margin-top:-20px; text-align:justify">
   <h2>Goal</h2>
   <p>
-  TODO
+  In this tutorial you will partly complete the files <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt> in order to
+  be able to map textures on 3d objects.
   </p>
 
   <h2>Useful files</h2>
   <p>For this tutorial, you will find the following files useful:
   <ul>
-    <li><tt>TODO</tt></li>
+    <li><tt>src/glApi.hpp</tt></li>
+    <li><tt>src/glApi.cpp</tt></li>
+    <li><tt>examples/PA4Application.hpp</tt></li>
+    <li><tt>examples/PA4Application.cpp</tt></li>
   </ul>
   </p>
 
@@ -19,14 +23,54 @@
 git pull
 </pre>
 
-  <h2>Part 1: TODO</h2>
-  <p>TODO</p>
-  <h2>Part 2: Validation</h2>
-  <p>
-  To verify that your implementation works correctly, you can run:
-  </p>
+<div class="row col-md-12">
+  <div class="row">
+    <div class="col-md-7">
+      <h2>Part 1: Textures</h2>
+      <p>
+        In this part you should start by looking at implementation in
+        <tt>examples/PA4Application.cpp</tt> and get familiar with its
+        implementation.  However you will only modify the files named
+        <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt>.
+        </p>
+        <p>
+        Your only task here is to fill in the implementation of the <code>Texture</code> class. As
+        always, have a look at the doxygen-like documentation in the <tt>src/glApi.hpp</tt> and then complete the implementation in <tt>src/glApi.cpp</tt>. You should take some particular care to the handling of the <code>Texture::setData</code> templated method. 
+        </p>
+
+        <h3>Validation</h3>
+        <p>
+        To verify that your implementation works correctly, you can run:
+        </p>
 <pre class="prettyprint lang-bash">
-$ ./glitter pa4
+$ ./glitter pa4 1 # for part 1 (use 2 or 3 later on)
 </pre>
+
+    </div>
+
+      <div class="col-md-5">
+        <div class="thumbnail">
+          <a class="fancybox" href="images/pa1.png"><img src="images/pa4.png"/></a>
+          <div class="caption">
+            Rendering after the first part completion: notice the strong aliasing.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <h2>Par 2: Mipmaps</h2>
+  <p>
+  In this part, you should complete further the <code>Texture::setData</code> method
+  to generate mipmaps when needed. Check that this features effectively mitigates
+  the stong aliasing visible in part 1.
+  </p>
+
+  <h2>Part 3: OpenGL samplers</h2>
+  <p>
+  In this part, you should implement the <code>Sampler</code> class, in order to be able
+  to set up texture sampling parameters. Notice in particular the effect of anisotropic 
+  filtering on the rendering of the checkerboard.
+  </p>
 
 </div>
