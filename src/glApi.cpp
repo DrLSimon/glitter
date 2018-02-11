@@ -143,55 +143,55 @@ bool Program::getUniformLocation(const std::string & name, int & location) const
   return false;
 }
 
-template <> void Program::uniformDispatcher(int location, const int & val) const
+template <> void Program::uniformDispatcher(int location, const int & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const uint & val) const
+template <> void Program::uniformDispatcher(int location, const uint & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const float & val) const
+template <> void Program::uniformDispatcher(int location, const float & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::vec2 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::vec2 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::vec3 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::vec3 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::vec4 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::vec4 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::mat2 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::mat2 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::mat3 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::mat3 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
 }
 
-template <> void Program::uniformDispatcher(int location, const glm::mat4 & val) const
+template <> void Program::uniformDispatcher(int location, const glm::mat4 & val)
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
   assert(false);
@@ -228,7 +228,7 @@ void Texture::unbind() const
   assert(false);
 }
 
-template <> void Texture::setData<GLubyte>(const Image<GLubyte> & image) const
+template <> void Texture::setData<GLubyte>(const Image<GLubyte> & image, bool mipmaps) const
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
   assert(false);
@@ -279,5 +279,11 @@ template <> void Sampler::setParameter<int>(GLenum paramName, const int & value)
 template <> void Sampler::setParameter<float>(GLenum paramName, const float & value) const
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must set up the target sampler parameter with the value" << std::endl;
+  assert(false);
+}
+
+void Sampler::enableAnisotropicFiltering() const
+{
+  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
   assert(false);
 }

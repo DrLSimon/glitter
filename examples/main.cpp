@@ -12,6 +12,7 @@
 #include "PA1Application.hpp"
 #include "PA2Application.hpp"
 #include "PA3Application.hpp"
+#include "PA4Application.hpp"
 #include "glApi.hpp"
 #include "termcolor/termcolor.hpp"
 #include "utils.hpp"
@@ -22,18 +23,21 @@ void printUsage(int argc, char * argv[])
     std::string pa1ShortDescription;
     std::string pa2ShortDescription;
     std::string pa3ShortDescription;
+    std::string pa4ShortDescription;
     std::string synopsis;
     std::string description;
     PA1Application::usage(pa1ShortDescription, synopsis, description);
     PA2Application::usage(pa2ShortDescription, synopsis, description);
     PA3Application::usage(pa3ShortDescription, synopsis, description);
+    PA4Application::usage(pa4ShortDescription, synopsis, description);
     std::cout << termcolor::bold << "Usage: " << termcolor::reset << argv[0] << " <command> [<args>]\n\n"
               << "The following commands are available:\n"
               << "  help        "
               << "print usage (of other commands if specified in <args>)\n"
               << "  pa1         " << pa1ShortDescription << "\n"
               << "  pa2         " << pa2ShortDescription << "\n"
-              << "  pa3         " << pa3ShortDescription << "\n";
+              << "  pa3         " << pa3ShortDescription << "\n"
+              << "  pa4         " << pa4ShortDescription << "\n";
   } else {
     std::string name = argv[2];
     std::string shortDescription;
@@ -72,6 +76,12 @@ int main(int argc, char * argv[])
     app = new PA2Application(640, 480);
   } else if (!strcmp(argv[1], "pa3")) {
     app = new PA3Application(640, 480);
+  } else if (!strcmp(argv[1], "pa4")) {
+    PA4Application::part = 1;
+    if (argc >= 3) {
+      PA4Application::part = atoi(argv[2]);
+    }
+    app = new PA4Application(640, 480);
   }
   app->setCallbacks();
   app->mainLoop();

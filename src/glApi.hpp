@@ -329,7 +329,7 @@ private:
    *
    * @note PA2 Specialize this function for all the necessary types (@a T)
    */
-  template <typename T> void uniformDispatcher(int location, const T & value) const;
+  template <typename T> static void uniformDispatcher(int location, const T & value);
 
   /**
    * @brief Retrieves the location of a uniform variable defined in this program
@@ -364,8 +364,8 @@ public:
    * @brief Constructs a Texture of a given type (2D, 3D, ...)
    * @param target the binding target type of the texture
    *
-   * @note PA3: At construction the GPU memory must be allocated, and the
-   * taget must be recorded.
+   * @note PA4 (part 1): At construction the GPU memory must be allocated, and the
+   * target must be recorded.
    */
   Texture(GLenum target);
   Texture(const Texture &) = delete;
@@ -374,32 +374,36 @@ public:
   /**
    * @brief Destructor
    *
-   * @note PA3: At destruction, GPU memory must be released.
+   * @note PA4 (part 1): At destruction, GPU memory must be released.
    */
   ~Texture();
 
   /**
    * @brief binds this Texture to the current state
    *
-   * @note PA3
+   * @note PA4 (part1)
    */
   void bind() const override;
 
   /**
    * @brief unbinds this Texture from the current state
    *
-   * @note PA3
+   * @note PA4 (part 1)
    */
   void unbind() const override;
 
   /**
    * @brief Sends data to the GPU location attached to this instance.
    * @param image the data to be sent
+   * @param mipmaps toggles mipmap generation
    *
-   * @note PA3: This method shall be specialized for @a T = @a unsigned @a char only.
+   * @note PA4 (part 1): This method shall be specialized for @a T = @a GLubyte only.
+   * You should take care of calling the correct ::glTexImage function depending on
+   * the texture target. You should at least handle GL_TEXTURE_2D and GL_TEXTURE_3D.
    *
+   * @note PA4 (part 2): You should generate mipmaps if they are toggled by the @p mipmaps argument
    */
-  template <typename T> void setData(const Image<T> & image) const;
+  template <typename T> void setData(const Image<T> & image, bool mipmaps = false) const;
 
 private:
   uint m_location; ///< GPU location of the texture
@@ -409,9 +413,9 @@ private:
 /**
  * @brief The Sampler class
  *
- * Associated with a texture unit once for all.
- * It can be attached to a program, and to a texture.
- * Describes the texture sampling parameters (filters, warping, ...).
+ * A sampler is associated with a texture unit once for all.
+ * It describes the texture sampling parameters (filters, warping, ...).
+ * It can be attached to a program, and a texture can be attached to it.
  */
 class Sampler : public OGLStateObject {
 public:
@@ -425,7 +429,7 @@ public:
    * @brief Sampler constructor
    * @param texUnit Texture unit number (0..15)
    *
-   * @note PA3: At construction GPU memory shall be allocated and
+   * @note PA4 (part 3): At construction GPU memory shall be allocated and
    * the texture unit shall be recorded.
    */
   Sampler(int texUnit);
@@ -435,21 +439,21 @@ public:
   /**
    * @brief Destructor
    *
-   * @note PA3: At destruction, GPU memory must be released.
+   * @note PA4 (part 3): At destruction, GPU memory must be released.
    */
   ~Sampler();
 
   /**
    * @brief binds this Sampler to the current state
    *
-   * @note PA3
+   * @note PA4 (part 3)
    */
   void bind() const override;
 
   /**
    * @brief unbinds this Sampler from the current state
    *
-   * @note PA3
+   * @note PA4 (part 3)
    */
   void unbind() const override;
 
@@ -459,7 +463,7 @@ public:
    * @param samplerName the name of the sampler variable
    * @param bindOption specifies if the program needs to be bound and unbound.
    *
-   * @note PA3: this method makes the link between this Sampler and a uniform variable
+   * @note PA4 (part 3): this method makes the link between this Sampler and a uniform variable
    * of the @p program. Beware that the uniform variable, should be assigned the value
    * of the texture unit, not the sampler location.
    */
@@ -469,7 +473,7 @@ public:
    * @brief attaches a texture to this sampler
    * @param texture the target texture
    *
-   * @note PA3: this method must activate this Sampler texture unit, and bind the Texture given
+   * @note PA4 (part 3): this method must activate this Sampler texture unit, and bind the Texture given
    * in parameter
    */
   void attachTexture(const Texture & texture) const;
@@ -479,9 +483,16 @@ public:
    * @param paramName the target parameter
    * @param value the desired affectation
    *
-   * @note PA3: this method must be specialized for @a float and @a int types
+   * @note PA4 (part 3): this method must be specialized for @a float and @a int types
    */
   template <typename T> void setParameter(GLenum paramName, const T & value) const;
+
+  /**
+   * @brief sets up this Sampler unit to perform anistropic filtering
+   *
+   * @note PA4 (part 3)
+   */
+  void enableAnisotropicFiltering() const;
 
 private:
   uint m_location; ///< GPU location of the sampler
