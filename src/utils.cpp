@@ -1,6 +1,4 @@
-#ifndef RESOURCE_DIR
-#define RESOURCE_DIR "."
-#endif
+#include "utils.hpp"
 #include <GL/glew.h>
 #include <fstream>
 #include <iostream>
@@ -55,6 +53,13 @@ std::string fileContent(const std::string & filename)
   std::ifstream fs(std::string(RESOURCE_DIR) + "/" + filename);
   std::string source(std::istreambuf_iterator<char>(fs), (std::istreambuf_iterator<char>()));
   return source;
+}
+
+std::string absolutename(const std::string & filename)
+{
+  if (filename[0] == '/')
+    return filename;
+  return std::string(RESOURCE_DIR) + "/" + filename;
 }
 
 std::string basename(const std::string & filepath)

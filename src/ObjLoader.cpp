@@ -22,10 +22,11 @@ unsigned char ObjLoader::white[4] = {255, 255, 255, 255};
 
 ObjLoader::ObjLoader(const std::string & filename)
 {
-  m_rootDir = basename(filename);
+  std::string absolutepath = absolutename(filename);
+  m_rootDir = basename(absolutepath);
   m_images.add(defaultDiffuseName, Image<>(white, 1, 1, 4));
   m_images.add(defaultNormalName, Image<>(bluish, 1, 1, 4));
-  parseFile(filename);
+  parseFile(absolutepath);
 }
 
 const std::vector<SimpleMaterial> & ObjLoader::materials() const
