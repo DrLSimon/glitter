@@ -12,6 +12,8 @@
     <li><tt>src/glApi.cpp</tt></li>
     <li><tt>examples/PA4Application.hpp</tt></li>
     <li><tt>examples/PA4Application.cpp</tt></li>
+    <li><tt>shaders/texture.v.glsl</tt></li>
+    <li><tt>shaders/texture.f.glsl</tt></li>
   </ul>
   </p>
 
@@ -28,11 +30,12 @@ git pull
     <div class="col-md-7">
       <h2>Part 1: Textures</h2>
       <p>
-        In this part you should start by looking at implementation in
-        <tt>examples/PA4Application.cpp</tt> and get familiar with its
-        implementation.  However you will only modify the files named
-        <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt>.
+        In this part you should start by looking at the two shaders
+        <tt>shaders/texture.(v|f).glsl</tt> and the source code in
+        <tt>examples/PA4Application.cpp</tt>.  However you will only modify the
+        files named <tt>src/glApi.cpp</tt> and <tt>src/glApi.hpp</tt>.
         </p>
+
         <p>
         Your only task here is to fill in the implementation of the <code>Texture</code> class. As
         always, have a look at the doxygen-like documentation in the <tt>src/glApi.hpp</tt> and then complete the implementation in <tt>src/glApi.cpp</tt>. You should take some particular care to the handling of the <code>Texture::setData</code> templated method. 
