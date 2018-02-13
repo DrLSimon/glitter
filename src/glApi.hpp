@@ -397,9 +397,10 @@ public:
    * @param image the data to be sent
    * @param mipmaps toggles mipmap generation
    *
-   * @note PA4 (part 1): This method shall be specialized for @a T = @a GLubyte only.
+   * @note PA4 (part 1): This method shall be specialized for @a T = @a GLubyte only. It should bind this texture, and send the data to it and then unbind the texture.
    * You should take care of calling the correct ::glTexImage function depending on
    * the texture target. You should at least handle GL_TEXTURE_2D and GL_TEXTURE_3D.
+   *
    *
    * @note PA4 (part 2): You should generate mipmaps if they are toggled by the @p mipmaps argument
    */
@@ -446,19 +447,19 @@ public:
   /**
    * @brief binds this Sampler to the current state
    *
-   * @note PA4 (part 3)
+   * @note PA4 (part 3): bind this sampler onto its texture unit
    */
   void bind() const override;
 
   /**
-   * @brief unbinds this Sampler from the current state
+   * @brief unbinds this Sampler from its texture unit
    *
    * @note PA4 (part 3)
    */
   void unbind() const override;
 
   /**
-   * @brief attaches this sampler to a a program
+   * @brief attaches this sampler to a program
    * @param prog the target program
    * @param samplerName the name of the sampler variable
    * @param bindOption specifies if the program needs to be bound and unbound.
@@ -470,7 +471,7 @@ public:
   void attachToProgram(const Program & prog, const std::string & samplerName, BindOption bindOption) const;
 
   /**
-   * @brief attaches a texture to this sampler
+   * @brief attaches a texture to this sampler (more precisely to its texture unit)
    * @param texture the target texture
    *
    * @note PA4 (part 3): this method must activate this Sampler texture unit, and bind the Texture given
@@ -479,7 +480,7 @@ public:
   void attachTexture(const Texture & texture) const;
 
   /**
-   * @brief sets a texture parameter
+   * @brief sets a Sampler parameter
    * @param paramName the target parameter
    * @param value the desired affectation
    *
