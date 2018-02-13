@@ -21,15 +21,15 @@
   As usual, begin by importing the latest base code updates into your
   repository by running
   </p>
-<pre class="prettyprint lang-bash">
+  <pre class="prettyprint lang-bash">
 git pull
-</pre>
+  </pre>
 
-<div class="row col-md-12">
-  <div class="row">
-    <div class="col-md-7">
-      <h2>Part 1: Textures</h2>
-      <p>
+  <div class="row col-md-12">
+    <div class="row">
+      <div class="col-md-7">
+        <h2>Part 1: Textures</h2>
+        <p>
         In this part you should start by looking at the two shaders
         <tt>shaders/texture.(v|f).glsl</tt> and the source code in
         <tt>examples/PA4Application.cpp</tt>.  However you will only modify the
@@ -45,23 +45,10 @@ git pull
         <p>
         To verify that your implementation works correctly, you can run:
         </p>
-<pre class="prettyprint lang-bash">
+        <pre class="prettyprint lang-bash">
 $ ./glitter pa4 1 # for part 1 (use 2 or 3 later on)
-</pre>
+        </pre>
 
-    </div>
-
-      <div class="col-md-5">
-        <div class="thumbnail">
-          <a class="fancybox" href="images/pa1.png"><img src="images/pa4.png"/></a>
-          <div class="caption">
-            Rendering after the first part completion: notice the strong aliasing.
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
   <h2>Par 2: Mipmaps</h2>
   <p>
   In this part, you should complete further the <code>Texture::setData</code> method
@@ -75,5 +62,36 @@ $ ./glitter pa4 1 # for part 1 (use 2 or 3 later on)
   to set up texture sampling parameters. Notice in particular the effect of anisotropic 
   filtering on the rendering of the checkerboard.
   </p>
+      </div>
+
+      <div class="col-md-5">                    
+        <div class="thumbnail">
+          <div class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="item active">
+                <img src="images/pa4.png" alt=""/>
+              </div>
+              <div class="item">
+                <img src="images/pa4_2.png" alt=""/>
+              </div>
+              <div class="item">
+                <img src="images/pa4_3.png" alt=""/>
+              </div>
+            </div>
+          </div>
+          <div class="caption">
+            Rendering after the each part completion:
+            <ul>
+              <li>The strong aliasing artifacts in part 1</li>
+              <li>The overblurring in part 2</li>
+              <li>The nice checkerboard diagonals in part 3</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 
 </div>
