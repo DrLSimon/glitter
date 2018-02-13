@@ -379,14 +379,14 @@ public:
   ~Texture();
 
   /**
-   * @brief binds this Texture to the current state
+   * @brief binds this Texture to the current state (more precisely to the currently active texture)
    *
    * @note PA4 (part1)
    */
   void bind() const override;
 
   /**
-   * @brief unbinds this Texture from the current state
+   * @brief unbinds this Texture
    *
    * @note PA4 (part 1)
    */
