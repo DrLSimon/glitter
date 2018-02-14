@@ -68,5 +68,5 @@ void PA1Application::usage(std::string & shortDescritpion, std::string & synopsi
   synopsis = "pa1 <part>";
   description = "  A minimal application displaying a yellow rectangle on white background.\n"
                 "  Two parts are available in this tutorial, and a command argument (<part>)\n"
-                "  can be used to specify which one to laungh.\n";
+                "  can be used to specify which one to launch.\n";
 }

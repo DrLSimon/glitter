@@ -49,6 +49,8 @@ void printUsage(int argc, char * argv[])
       PA2Application::usage(shortDescription, synopsis, description);
     } else if (name == "pa3") {
       PA3Application::usage(shortDescription, synopsis, description);
+    } else if (name == "pa4") {
+      PA4Application::usage(shortDescription, synopsis, description);
     }
     std::cout << termcolor::bold << "NAME\n"
               << termcolor::reset << "  " << name << " - " << shortDescription << "\n\n"
