@@ -66,26 +66,35 @@ $ ./glitter pa4 1 # for part 1 (use 2 or 3 later on)
 
       <div class="col-md-5">                    
         <div class="thumbnail">
-          <div class="carousel slide" data-ride="carousel">
+          <div id="pa4-carousel" class="carousel slide" data-ride="carousel">   
+            <ol class="carousel-indicators">
+              <li data-target="#pa4-carousel" data-slide-to="0" class="active"></li>
+              <li data-target="#pa4-carousel" data-slide-to="1"></li>
+              <li data-target="#pa4-carousel" data-slide-to="2"></li>
+            </ol>
             <div class="carousel-inner">
               <div class="item active">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 1</h3>
+                  <p>Notice <b>aliasing</b> in the distance</p>
+                </div>
                 <img src="images/pa4.png" alt=""/>
               </div>
               <div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 2</h3>
+                  <p>Notice <b>overblurring</b> in the distance</p>
+                </div>
                 <img src="images/pa4_2.png" alt=""/>
               </div>
               <div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 3</h3>
+                  <p>Notice <b>sharp</b> diagonals</p>
+                </div>
                 <img src="images/pa4_3.png" alt=""/>
               </div>
             </div>
-          </div>
-          <div class="caption">
-            Rendering after the each part completion:
-            <ul>
-              <li>The strong aliasing artifacts in part 1</li>
-              <li>The overblurring in part 2</li>
-              <li>The nice checkerboard diagonals in part 3</li>
-            </ul>
           </div>
         </div>
       </div>
