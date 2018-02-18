@@ -51,6 +51,8 @@ add_executable(glitter
   examples/PA3Application.cpp
   examples/PA4Application.hpp
   examples/PA4Application.cpp
+  examples/PA5Application.hpp
+  examples/PA5Application.cpp
   ${GLSLFiles}
   )
 target_link_libraries(glitter utils ${GLFW3_LIBRARIES} ${GLEW_LIBRARIES})

@@ -1,43 +1,46 @@
 #version 410
-// ins (inputs)
+
+// ins (vertex input attributes)
 layout(location = 0) in vec3 vertexPosition;
-layout(location = 1) in vec3 vertexNormal;
-layout(location = 2) in vec3 vertexColor;
-layout(location = 3) in vec2 vertexUV;
-layout(location = 4) in vec3 vertexTangent;
-// out (outputs)
-out vec4 position;
-out vec3 normal;
-out vec3 tangent;
-out vec3 bitangent;
-out vec2 uv;
-out vec3 color;
+layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNormal;
+layout(location = 3) in vec3 vertexTangent;
 
-uniform float time;
-uniform float scale;
+// uniforms
+uniform mat4 M; ///< model world matrix
+uniform mat4 V; ///< world view matrix
+uniform mat4 P; ///< projection matrix
 
-mat4 rotationMatrix(vec3 axis, float angle)
+struct Geometry {
+  vec4 position;  ///< homogeneous position in world space
+  vec3 normal;    ///< normal in world space
+  vec3 tangent;   ///< tangent in world space
+  vec3 bitangent; ///< bitangent (normal cross tangent)
+};
+
+// out (vertex output attributes)
+out Geometry geomInWorld; ///< All geometric attributes (in world space).
+out vec2 uv;              ///< uv coordinates
+
+/**
+ * @brief computes the normal in world space
+ * @param modelWorld the transform between the object and the world
+ * @param normalInObject the normal in object space
+ * @return the normal in world coordinates
+ *
+ * @note PA5 (part 1): Here, you should compute the so-called normal matrix, and apply it to the input normal. Do not forget to normalize the resulting normal (since scale can be changed).
+ */
+vec3 transformNormal(const in mat4 modelWorld, const in vec3 normalInObject)
 {
-    axis = normalize(axis);
-    float s = sin(angle);
-    float c = cos(angle);
-    float oc = 1.0 - c;
-
-    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-                0.0,                                0.0,                                0.0,                                1.0);
+  return normalInObject;
 }
 
 void main()
 {
-    mat4 view=rotationMatrix(vec3(1,1,1),time);
-    vec4 positionH=vec4(scale*vertexPosition,1);
-    gl_Position =  view*positionH;
-    position = positionH;
-    normal = vertexNormal;
-    tangent = vertexTangent;
-    bitangent=cross(normal, tangent);
-    color = vertexColor;
-    uv=vertexUV;
+  geomInWorld.position = M * vec4(vertexPosition, 1);
+  gl_Position = P * V * geomInWorld.position;
+  geomInWorld.normal = transformNormal(M, vertexNormal);
+  geomInWorld.tangent = normalize(mat3(M) * vertexTangent);
+  geomInWorld.bitangent = cross(geomInWorld.normal, geomInWorld.tangent);
+  uv = vertexUV;
 }

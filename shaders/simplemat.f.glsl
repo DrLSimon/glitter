@@ -1,20 +1,24 @@
 #version 410
-// Fragment attributes
-in vec4 position;
-in vec3 normal;
-in vec3 tangent;
-in vec3 bitangent;
-in vec2 uv ;
 
-// Directional light uniforms
-struct DirLight {
-  vec3 lightdirn;
-  vec3 lightcolor;
+struct Geometry {
+  vec4 position;  ///< homogeneous position in world space
+  vec3 normal;    ///< normal in world space
+  vec3 tangent;   ///< tangent in world space
+  vec3 bitangent; ///< bitangent (normal cross tangent)
 };
 
-uniform DirLight light0;
-uniform DirLight light1;
-uniform DirLight light2;
+// Fragment attributes
+in Geometry geomInWorld; ///< All geometric attributes (in world space).
+in vec2 uv;              ///< uv coordinates
+
+// Directional light struct
+struct DirLight {
+  vec3 direction;
+  vec3 intensity;
+};
+
+uniform DirLight lightsInWorld[3];  ///< lights in world space
+uniform vec3 positionCameraInWorld; ///< camera center in worldSpace
 
 // Material properties uniforms
 struct Material {
@@ -26,72 +30,83 @@ struct Material {
   // Diffuse and normal maps
   sampler2D colormap;
   sampler2D normalmap;
+  sampler2D specularmap;
 };
 
 uniform Material material;
+uniform bool displayNormals;
 
 // output color
-out vec4 fragColor ; 
+out vec4 fragColor;
 
 /**
-* @brief computes the diffuse contribution of a ligth source
-* @param light a directional light source
-* @param normal the object normal in eye coordinates
-* @param mydiffuse the diffuse albedo of the material
-* @return the Lambertian contribution
-*
-* @note PA5
-*/
-vec3 ComputeLightLambert(const in DirLight light, const in vec3 normal, const in vec3 mydiffuse)
+ * @brief computes the diffuse contribution of a light source
+ * @param light a directional light source
+ * @param normal the object normal in the same coordinates as the light
+ * @param diffuse the diffuse albedo of the material
+ * @return the Lambertian contribution
+ *
+ * @note PA5 (part 2)
+ */
+vec3 computeLightLambert(const in DirLight light, const in vec3 normal, const in vec3 diffuse)
 {
-    vec3 lambert = vec3(1.f);
-    return lambert;
+  return vec3(0);
 }
 
 /**
-* @brief computes the specular (Phong) contribution of a ligth source
-* @param light a directional light source
-* @param normal the object normal in eye coordinates
-* @param eyedirn the direction from the fragment to the camera center
-* @param myspecular the specular albedo of the material
-* @param myshininess the shininess of the material
-* @return the Phong contribution
-*
-* @note PA5
-*/
-vec3 ComputeLightSpecular (const in DirLight light, const in vec3 normal, const in vec3 eyedirn, const in vec3 myspecular, const in float myshininess)
+ * @brief computes the specular (Phong or Blinn-Phong) contribution of a light source
+ * @param light a directional light source
+ * @param normal the object normal in the same coordinates as the light
+ * @param directionToCamera the direction from the fragment to the camera center
+ * @param specular the specular albedo of the material
+ * @param shininess the shininess of the material
+ * @return the specular contribution
+ *
+ * @note PA5 (part 2): Here you should implement one specular illumination model (you may choose freely between Phong and Blinn-Phong model).
+ */
+vec3 computeLightSpecular(const in DirLight light, const in vec3 normal, const in vec3 directionToCamera, const in vec3 specular, const in float shininess)
 {
-    vec3 phong = vec3(0.f);
-    return phong;
+  return vec3(0);
 }
 
 /**
-* @brief computes the diffuse contribution of a ligth source
-* @param macroNormal the macroscopic object normal
-* @return the "microscopic" object normal
-*
-* @note PA5 : you must use the normal map to disturb the input
-* macroscopic normal and get the microscopic one.
-*/
-vec3 ComputeNormal(const in vec3 macroNormal)
+ * @brief computes the diffuse contribution of a light source
+ * @param macroNormal the macroscopic object normal
+ * @param macroTangent the macroscopic object tangent
+ * @param macroBitangent the macroscopic object bitangent
+ *
+ * @return the "microscopic" object normal
+ *
+ * @note PA5 (part 3): you must use the normal map to disturb the input
+ * macroscopic normal and get the microscopic one.
+ */
+vec3 computeMicroNormal(const in vec3 macroNormal, const in vec3 macroTangent, const in vec3 macroBitangent)
 {
-    vec3 microNormal = macroNormal;
-    return microNormal;
+  vec3 microNormal = macroNormal;
+  return microNormal;
+}
+
+vec4 normal2Color(vec3 n)
+{
+  return vec4(0.5 * (n + 1), 1);
 }
 
 void main()
 {
-  vec3 microNormal = ComputeNormal(normal);
+  vec3 microNormal = computeMicroNormal(geomInWorld.normal, geomInWorld.tangent, geomInWorld.bitangent);
+  if (displayNormals) {
+    fragColor = normal2Color(microNormal);
+    return;
+  }
 
-  vec3 lambert = ComputeLightLambert(light0, microNormal, material.diffuse) +
-                  ComputeLightLambert(light1, microNormal, material.diffuse) +
-                  ComputeLightLambert(light2, microNormal, material.diffuse);
-
-  const vec3 eyepos = vec3(0,0,0);
-  vec3 eyedirn = normalize(eyepos - position.xyz/position.w);// don't forget to dehomogenize the vertex
-  vec3 phong= ComputeLightSpecular(light0, microNormal, eyedirn, material.specular, material.shininess) +
-                  ComputeLightSpecular(light1, microNormal, eyedirn, material.specular, material.shininess) +
-                  ComputeLightSpecular(light2, microNormal, eyedirn, material.specular, material.shininess);
-
-  fragColor= vec4(material.ambient*texture(material.colormap, uv).rgb + lambert*texture(material.colormap, uv).rgb + phong, 1);
+  vec3 diffuse = material.diffuse * texture(material.colormap, uv).rgb;
+  vec3 specular = material.specular * texture(material.specularmap, uv).rgb;
+  vec3 lambert = vec3(0);
+  vec3 phong = vec3(0);
+  vec3 directionToCamera = normalize(positionCameraInWorld - geomInWorld.position.xyz / geomInWorld.position.w);
+  for (int k = 0; k < 3; k++) {
+    lambert += computeLightLambert(lightsInWorld[k], microNormal, diffuse);
+    phong += computeLightSpecular(lightsInWorld[k], microNormal, directionToCamera, specular, material.shininess);
+  }
+  fragColor = vec4(material.ambient + lambert + phong, 1);
 }

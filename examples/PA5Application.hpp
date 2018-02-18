@@ -1,18 +1,21 @@
-#ifndef __PA4_APPLICATION_H__
-#define __PA4_APPLICATION_H__
+#ifndef __PA5_APPLICATION_H__
+#define __PA5_APPLICATION_H__
 #include <memory>
 struct GLFWwindow;
 #include "Application.hpp"
 #include "glApi.hpp"
 
-class PA4Application : public Application {
+// forward declarations
+struct SimpleMaterial;
+
+class PA5Application : public Application {
 public:
-  PA4Application(int windowWidth, int windowHeight);
+  PA5Application(int windowWidth, int windowHeight);
   void setCallbacks() override;
   static void usage(std::string & shortDescritpion, std::string & synopsis, std::string & description);
 
 public:
-  static unsigned int part; ///< Part 1 or 2 of the tutorial
+  static bool displayNormals; ///< Toggles normal display
 
 private:
   void renderFrame() override;
@@ -28,14 +31,23 @@ private:
     RenderObject() = delete;
     RenderObject(const RenderObject &) = delete;
 
-    static std::shared_ptr<RenderObject> createCheckerBoardCubeInstance(const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createCheckerBoardPlaneInstance(const glm::mat4 & modelWorld);
     /**
      * @brief creates an instance from a wavefront file and modelWorld matrix
      * @param objname the filename of the wavefront file
      * @param modelWorld the matrix transform between the object (a.k.a model) space and the world space
      * @return the created RenderObject as a smart pointer
      */
-    static std::shared_ptr<RenderObject> createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld);
+
+    /**
+     * @brief Sets all uniform variables related to material and lighting
+     * @param program
+     * @param material
+     *
+     * @note Besides the material, three directional lights (defined in world space) are passed to the GLSL program.
+     */
+    void setProgramMaterial(std::shared_ptr<Program> & program, const SimpleMaterial & material) const;
 
     /**
      * @brief Draw this VAO
@@ -44,30 +56,30 @@ private:
 
     /**
      * @brief update the program MVP uniform variable
-     * @param prog the target program
      * @param proj the projection matrix
      * @param view the worldView matrix
      */
-    void updateProgram(Program & prog) const;
-
     void update(const glm::mat4 & proj, const glm::mat4 & view);
 
   private:
     RenderObject(const glm::mat4 & modelWorld);
     RenderObject(const std::string & objname, const glm::mat4 & modelWorld);
     void loadWavefront(const std::string & objname);
-    static std::vector<GLubyte> makeCheckerBoard();
 
   private:
     std::vector<std::shared_ptr<VAO>> m_vaos;
     glm::mat4 m_mw; ///< modelWorld matrix
     std::vector<std::shared_ptr<Program>> m_programs;
     std::vector<std::shared_ptr<Texture>> m_diffuseTextures;
+    std::vector<std::shared_ptr<Texture>> m_normalTextures;
+    std::vector<std::shared_ptr<Texture>> m_specularTextures;
     std::unique_ptr<Sampler> m_colormap;
+    std::unique_ptr<Sampler> m_specularmap;
+    std::unique_ptr<Sampler> m_normalmap;
   };
 
 private:
-  std::vector<std::shared_ptr<RenderObject>> m_objects; ///< render objects
+  std::vector<std::unique_ptr<RenderObject>> m_objects; ///< render objects
   glm::mat4 m_proj;                                     ///< Projection matrix
   glm::mat4 m_view;                                     ///< worldView matrix
   float m_eyePhi;                                       ///< Camera position longitude angle
@@ -76,4 +88,4 @@ private:
   float m_deltaTime;                                    ///< elapsed time since last frame
 };
 
-#endif // !defined(__PA4_APPLICATION_H__)
+#endif // !defined(__PA5_APPLICATION_H__)

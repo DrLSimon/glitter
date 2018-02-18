@@ -130,8 +130,10 @@ void ObjLoader::parseFile(const std::string & filename)
     material.shininess = mp->shininess;
     material.diffuseTexName = (mp->diffuse_texname != "") ? mp->diffuse_texname : defaultDiffuseName;
     material.normalTexName = (mp->normal_texname != "") ? mp->normal_texname : defaultNormalName;
+    material.specularTexName = (mp->normal_texname != "") ? mp->specular_texname : defaultDiffuseName;
     loadImage(mp->diffuse_texname);
     loadImage(mp->normal_texname);
+    loadImage(mp->specular_texname);
     m_materials.push_back(material);
   }
 

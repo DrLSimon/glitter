@@ -13,5 +13,6 @@ struct SimpleMaterial {
 
   std::string diffuseTexName;
   std::string normalTexName;
+  std::string specularTexName;
 };
 #endif // !defined(__SIMPLE_MATERIAL_H__)
