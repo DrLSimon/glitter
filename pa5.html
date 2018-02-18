@@ -1,33 +1,90 @@
 <div style="margin-top:-20px; text-align:justify">
-  <h2>Goal</h2>
-  <p>
-  TODO
-  </p>
+  <div class="row col-md-12">
+    <h2>Goal</h2>
+    <p>
+    This tutorial focuses on three complementary objectives:
+    <ol>
+      <li>Getting more familiar with the programming of GLSL shaders</li>
+      <li>Learning about classical illumination models (diffuse and specular)</li>
+      <li>Implementing normal mapping</li>
+    </ol>
+    </p>
 
-  <h2>Useful files</h2>
-  <p>For this tutorial, you will find the following files useful:
-  <ul>
-    <li><tt>TODO</tt></li>
-  </ul>
-  </p>
+    <h2>Useful files</h2>
+    <p>For this tutorial, you will find the following files useful:
+    <ul>
+      <li><tt>shaders/simplemat.v.glsl</tt></li>
+      <li><tt>shaders/simplemat.f.glsl</tt></li>
+      <li><tt>src/PA5Application.hpp</tt></li>
+      <li><tt>src/PA5Application.cpp</tt></li>
+    </ul>
+    </p>
 
-  <p>
-  As usual, begin by importing the latest base code updates into your
-  repository by running
-  </p>
+    <p>
+    As usual, begin by importing the latest base code updates into your
+    repository by running
+    </p>
 <pre class="prettyprint lang-bash">
 git pull
 </pre>
 
-  <h2>Part 1: TODO</h2>
-  <p>TODO</p>
-  <h2>Part 2: Validation</h2>
-  <p>
-  To verify that your implementation works correctly, you can run:
-  </p>
-<pre class="prettyprint lang-bash">
-$ ./glitter pa5
-</pre>
+    <h2>Part 1: Normal matrix</h2>
+    <p>Start by inspecting carefully the vertex shader file (<tt>shaders/simplemat.v.glsl</tt>) and notice that all geometric attributes are expressed in the world coordinates before sending them to the fragment shader. Pay particular care to the difference between the way positions are transformed and the way directions (such as a tangent) are transformed. 
+    </p>
 
+    <p> In fact, one kind of transformation is not yet implemented: this is the case of normals. To fill this gap, please implement the <code>transformNormal</code> function in the vertex shader.
+    </p>
+
+    <h2>Part 2: Diffuse and specular shading</h2>
+    <p>In this part, you will implement the diffuse and specular models discussed in class. To do so, complete the <code>computeLightLambert</code> and <code>computeLightSpecular</code> routines defined in the fragment shader. Note that for the specular contribution, you may choose freely between Phong and Blinn-Phong models.</p>
+
+    <div class="row">
+      <div class="col-md-7">
+        <h2>Part 3: Normal mapping</h2>
+        <p>In this last part, you are going to implement normal mapping. This technique consists in disturbing the normal of each fragment, and controlling the disruption via a texture (referred to as a normal map). To do so, start by reviewing the following material and then complete the implementation of the <code>computeMicroNormal</code> function in the fragment shader.</p>
+
+        <h4>Tangent space</h4>
+        <p>
+        To implement normal mapping, you must first understand the notion of <b>tangent space</b>. It refers to an <b>orthonormal</b> system of coordinates that is attached to each point $P$ of a surface, and where the two first axes are <b>tangent</b> to the surface at $P$ and the last axis is <b>orthogonal</b> to the surface at that same location.
+
+        You should notice that there are a few lingering ambiguities in the aforementioned definition of the tangent space, even though the 3 axes are assumed normalized and pairwise orthogonal. First, the <b>sign of the normal</b> is not determined. This choice is left to the designer of the 3d models (and is usually made so that normals are pointing outwards for closed manifold surfaces).
+        </p>
+
+        <p>
+        A tougher ambiguity remains with respect to the definition of the two tangent axes. Indeed, they can be arbitrarily rotated around the normal, and the whole set of three vectors will remain an orthonormal frame. Since the tangent space will be used in combination with textures, a practical way of breaking the ambiguity consists in selecting as a first tangent the direction where only the <tt>u</tt> texture coordinate varies (i.e. the direction such that <tt>v</tt> remains constant). The remaining tangent, known as the <b>bitangent</b> is then entirely determined as the cross product of the normal and the tangent.
+        </p>
+
+        <h4>Normal map</h4>
+        <p>
+        As said in the introduction, a <b>normal map</b> encodes a perturbation of the <i><q>macroscopic normal</q></i>. The combination of the macroscopic normal and the disruption yields a <i><q>microscopic normal</q></i> which can be used in shading computation. Denoting $(n_r,n_g,n_b)$ the three <code>unsigned byte</code> scalars stored in the normal map and $t, b$ and $n$ the macroscopic  tangent, bitangent and normal, then the perturbed (microscopic) normal is computed as follows:
+        $$n' = remap(n_r) t + remap(n_g) b + remap(n_b) n$$
+        where the $remap$ routine merely applies an affine mapping such that $remap(0)=-1$ and $remap(255)=1$.
+        </p>
+      </div>
+
+      <div class="col-md-5">
+        <div class="thumbnail">
+          <a class="fancybox" href="videos/tangentSpace.mp4">
+                <video class="video-fluid" style="width:100%" autoplay loop>
+                  <source src="videos/tangentSpace.mp4" type="video/mp4" />
+                </video>
+          </a>
+          <div class="caption">
+            Tangent space ambiguity.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Validation</h3>
+    <p>
+    To verify that your implementation works correctly, you can run:
+    </p>
+<pre class="prettyprint lang-bash">
+$ ./glitter pa5 1 # the last argument toggles rendering of normals
+$ ./glitter pa5 0 # the last argument toggles rendering of colors
+</pre>
+  </div>
 </div>
 
