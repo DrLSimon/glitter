@@ -47,11 +47,11 @@ git pull
         <p>
         To implement normal mapping, you must first understand the notion of <b>tangent space</b>. It refers to an <b>orthonormal</b> system of coordinates that is attached to each point $P$ of a surface, and where the two first axes are <b>tangent</b> to the surface at $P$ and the last axis is <b>orthogonal</b> to the surface at that same location.
 
-        You should notice that there are a few lingering ambiguities in the aforementioned definition of the tangent space, even though the 3 axes are assumed normalized and pairwise orthogonal. First, the <b>sign of the normal</b> is not determined. This choice is left to the designer of the 3d models (and is usually made so that normals are pointing outwards for closed manifold surfaces).
+        You should notice that there are a few lingering ambiguities in the aforementioned definition of the tangent space, even though the 3 axes are assumed normalized and pairwise orthogonal. First, the <b>sign of the normal</b> is not determined. This choice is left to the designer of the 3d models (and is usually made so that normals are pointing outwards for closed manifold surfaces). 
         </p>
 
         <p>
-        A tougher ambiguity remains with respect to the definition of the two tangent axes. Indeed, they can be arbitrarily rotated around the normal, and the whole set of three vectors will remain an orthonormal frame. Since the tangent space will be used in combination with textures, a practical way of breaking the ambiguity consists in selecting as a first tangent the direction where only the <tt>u</tt> texture coordinate varies (i.e. the direction such that <tt>v</tt> remains constant). The remaining tangent, known as the <b>bitangent</b> is then entirely determined as the cross product of the normal and the tangent.
+        A tougher ambiguity remains with respect to the definition of the two tangent axes. Indeed, they can be arbitrarily rotated around the normal, and the whole set of three vectors will remain an orthonormal frame. Since the tangent space will be used in combination with textures, a practical way of breaking the ambiguity consists in selecting as a first tangent the direction where only the <tt>u</tt> texture coordinate varies (i.e. the direction such that <tt>v</tt> remains constant). The remaining tangent, known as the <b>bitangent</b> is then entirely determined as the cross product of the normal and the tangent. Verify in the <tt>examples/PA5Application.cpp</tt> file, that the previous convention was indeed enforced within the <code>RenderObject::createCheckerBoardPlaneInstance</code> routine.
         </p>
 
         <h4>Normal map</h4>
@@ -60,6 +60,17 @@ git pull
         $$n' = remap(n_r) t + remap(n_g) b + remap(n_b) n$$
         where the $remap$ routine merely applies an affine mapping such that $remap(0)=-1$ and $remap(255)=1$.
         </p>
+
+    <h3>Validation</h3>
+    <p>
+    To verify that your implementation works correctly, you can run:
+    </p>
+<pre class="prettyprint lang-bash">
+$ ./glitter pa5
+</pre>
+    <p>
+    You may hold the 'N' key down to visualize normals.
+    </p>
       </div>
 
       <div class="col-md-5">
@@ -73,18 +84,57 @@ git pull
             Tangent space ambiguity.
           </div>
         </div>
+
+        <div class="thumbnail">
+          <div id="pa5-carousel" class="carousel slide" data-ride="carousel" data-pause="hover">   
+            <ol class="carousel-indicators">
+              <li data-target="#pa5-carousel" data-slide-to="0" class="active"></li>
+              <li data-target="#pa5-carousel" data-slide-to="1"></li>
+              <li data-target="#pa5-carousel" data-slide-to="2"></li>
+              <li data-target="#pa5-carousel" data-slide-to="3"></li>
+              <li data-target="#pa5-carousel" data-slide-to="4"></li>
+            </ol>
+            <div class="carousel-inner">
+              <div class="item active">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 1</h3>
+                  <p>Incorrect normals</p>
+                </div>
+                <img src="images/pa5IncorrectNormals.png" alt=""/>
+              </div>
+              <div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 1</h3>
+                  <p>Corrected normals</p>
+                </div>
+                <img src="images/pa5CorrectNormals.png" alt=""/>
+              </div>
+              <div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 2</h3>
+                  <p>Diffuse and specular shading</p>
+                </div>
+                <img src="images/pa5Part2.png" alt=""/>
+              </div>
+              <div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 3</h3>
+                  <p>Normal mapping (normals)</p>
+                </div>
+                <img src="images/pa5Part3Normals.png" alt=""/>
+              </div><div class="item">
+                <div class="carousel-caption" style="top:0;bottom:auto;">
+                  <h3>Part 3</h3>
+                  <p>Normal mapping (colors)</p>
+                </div>
+                <img src="images/pa5Part3Colors.png" alt=""/>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
-
-    <h3>Validation</h3>
-    <p>
-    To verify that your implementation works correctly, you can run:
-    </p>
-<pre class="prettyprint lang-bash">
-$ ./glitter pa5 1 # the last argument toggles rendering of normals
-$ ./glitter pa5 0 # the last argument toggles rendering of colors
-</pre>
   </div>
 </div>
 
