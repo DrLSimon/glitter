@@ -57,6 +57,29 @@ add_executable(glitter
   )
 target_link_libraries(glitter utils ${GLFW3_LIBRARIES} ${GLEW_LIBRARIES})
 
+# +------------------------------------------------------------------+
+# |  rubik's cube                                                    |
+# +------------------------------------------------------------------+
+add_executable(rubik
+  rubik/main.cpp
+  rubik/RubikApplication.hpp
+  rubik/RubikApplication.cpp
+  rubik/RubikRenderer.hpp
+  rubik/RubikRenderer.cpp
+  rubik/RubikLogic.hpp
+  rubik/RubikLogic.cpp
+  rubik/GameStage.hpp
+  rubik/GameStage.cpp
+  rubik/TextPrinter.hpp
+  rubik/TextPrinter.cpp
+  rubik/rubik.v.glsl
+  rubik/rubik.f.glsl
+  rubik/font.v.glsl
+  rubik/font.f.glsl
+  rubik/hud.v.glsl
+  rubik/hud.f.glsl
+  )
+target_link_libraries(rubik utils ${GLFW3_LIBRARIES} ${GLEW_LIBRARIES})
 
 # +------------------------------------------------------------------+
 # |  Doxygen Generation                                              |
