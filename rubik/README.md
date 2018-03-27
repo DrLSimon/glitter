@@ -29,7 +29,7 @@ The program can be executed without any optional argument, as `./rubik`.
 
 # Demo
 
-![Demo](rubik/rubik.mp4 "Demo of the rubik game")
+![Demo](./rubik.mp4 "Demo of the rubik game")
 
 
 # Controls
