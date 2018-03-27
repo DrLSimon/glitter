@@ -20,7 +20,7 @@ public:
    * @param y
    * @param fontsize percentage of width covered by one character
    */
-  void printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor = glm::vec3(1, 1, 1));
+  void printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor = glm::vec3(1, 1, 1), const glm::vec4 & fillColor = glm::vec4(1, 1, 1, 0));
 
   /// Draws all the vaos created with printText
   void draw();
@@ -39,6 +39,7 @@ private:
   Sampler m_sampler;                        ///< Texture sampler
   std::vector<std::unique_ptr<VAO>> m_vaos; ///< VAOs created by calling printText
   std::vector<glm::vec3> m_colors;          ///< Font colors
+  std::vector<glm::vec4> m_fillColors;      ///< Fill colors
 };
 
 #endif // !defined(__TEXT_PRINTER_H__)

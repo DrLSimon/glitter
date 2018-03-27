@@ -51,7 +51,18 @@ private:
 /// The actual playing stage
 class PlayingStage final : public GameStage {
 public:
-  PlayingStage() { m_renderer.deform(false); }
+  PlayingStage() : m_displayHelp(false), m_helper(800, 800)
+  {
+    const glm::vec3 textColor(1, 0, 0);
+    const glm::vec4 fillColor(0.5, 0.5, 0.5, 0.8);
+    const unsigned int fontSize = 3;
+    m_renderer.deform(false);
+    m_helper.printText("1,2,3: rotate faces", 0, 0, fontSize, textColor, fillColor);
+    m_helper.printText("\x1a,\x1b  : rotate cube ", 0, 1, fontSize, textColor, fillColor);
+    m_helper.printText("       horizonttaly", 0, 2, fontSize, textColor, fillColor);
+    m_helper.printText("\x12    : rotate cube ", 0, 3, fontSize, textColor, fillColor);
+    m_helper.printText("       vertically  ", 0, 4, fontSize, textColor, fillColor);
+  }
 
   void renderFrame() override;
 
@@ -69,6 +80,8 @@ private:
 private:
   RubikRenderer m_renderer; ///< the rubik's cube renderer
   RubikState m_state;       ///< the rubik's cube state
+  TextPrinter m_helper;
+  bool m_displayHelp;
 };
 
 /// game over menu

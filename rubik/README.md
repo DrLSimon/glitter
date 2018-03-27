@@ -39,8 +39,9 @@ The program can be executed without any optional argument, as `./rubik`.
 * Enter: Next menu (start, play, gameover)
 
 ## Keyboard (during gameplay mappings)
+* 'h'    : Display help on mappings
 * Arrows : Rotate view
-* 1,2,3 : Rotate the three visible faces
+* 1,2,3  : Rotate the three visible faces
 
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

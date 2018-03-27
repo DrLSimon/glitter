@@ -14,9 +14,10 @@ TextPrinter::TextPrinter(uint width, uint height)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void TextPrinter::printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor)
+void TextPrinter::printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor, const glm::vec4 & fillColor)
 {
   m_colors.push_back(fontColor);
+  m_fillColors.push_back(fillColor);
   m_vaos.push_back(std::unique_ptr<VAO>(new VAO(2)));
   std::vector<glm::vec2> positions;
   std::vector<glm::vec2> uvs;
@@ -52,7 +53,9 @@ void TextPrinter::draw()
   for (uint k = 0; k < m_vaos.size(); ++k) {
     auto & vao = m_vaos[k];
     glm::vec3 fontColor = m_colors[k];
+    glm::vec4 fillColor = m_fillColors[k];
     m_program.setUniform("fontColor", fontColor);
+    m_program.setUniform("fillColor", fillColor);
     vao->draw();
   }
   glDisable(GL_BLEND);

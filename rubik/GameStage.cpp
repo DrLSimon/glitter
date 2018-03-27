@@ -54,6 +54,9 @@ std::unique_ptr<GameStage> StartMenuStage::nextStage() const
 void PlayingStage::renderFrame()
 {
   m_renderer.renderFrame();
+  if (m_displayHelp) {
+    m_helper.draw();
+  }
 }
 
 void PlayingStage::update()
@@ -68,31 +71,38 @@ void PlayingStage::keyCallback(GLFWwindow * window, int key, int scancode, int a
     case '0':
       m_renderer.resetView();
       break;
-    // case 'h':
-    // TODO
+    case 'H': {
+      std::cout << "Turning help on / off" << std::endl;
+      m_displayHelp = not m_displayHelp;
+      break;
+    }
     case GLFW_KEY_UP: {
       if (not m_renderer.isLocked()) {
         glm::vec3 right{1, 0, 0};
         m_renderer.launchViewRotation(right, 1);
       }
+      break;
     }
     case GLFW_KEY_DOWN: {
       if (not m_renderer.isLocked()) {
         glm::vec3 left{-1, 0, 0};
         m_renderer.launchViewRotation(left, 1);
       }
+      break;
     }
     case GLFW_KEY_RIGHT: {
       if (not m_renderer.isLocked()) {
         glm::vec3 up{0, 1, 0};
         m_renderer.launchViewRotation(up, 1);
       }
+      break;
     }
     case GLFW_KEY_LEFT: {
       if (not m_renderer.isLocked()) {
         glm::vec3 down{0, -1, 0};
         m_renderer.launchViewRotation(down, 1);
       }
+      break;
     }
     case '1':
       turnClockwise(0);
