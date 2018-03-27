@@ -72,7 +72,6 @@ void PlayingStage::keyCallback(GLFWwindow * window, int key, int scancode, int a
       m_renderer.resetView();
       break;
     case 'H': {
-      std::cout << "Turning help on / off" << std::endl;
       m_displayHelp = not m_displayHelp;
       break;
     }

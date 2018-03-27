@@ -1,5 +1,8 @@
-#include "TextPrinter.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/ext.hpp"
+
 #include "Image.hpp"
+#include "TextPrinter.hpp"
 #include "stb_image.h"
 #include "utils.hpp"
 
@@ -14,7 +17,7 @@ TextPrinter::TextPrinter(uint width, uint height)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void TextPrinter::printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor, const glm::vec4 & fillColor)
+void TextPrinter::printText(const std::string & text, uint x, uint y, uint fontsize, const glm::vec3 & fontColor, const glm::vec4 & fillColor, uint padding)
 {
   m_colors.push_back(fontColor);
   m_fillColors.push_back(fillColor);
@@ -28,7 +31,13 @@ void TextPrinter::printText(const std::string & text, uint x, uint y, uint fonts
   fontsize = fontsize / 100.f * m_width;
   auto toClip = [width, height, fontsize](uint x, uint y) { return glm::vec2((x * fontsize - width / 2.) * 2. / width, -(y * fontsize - height / 2.) * 2.f / height); };
   auto toUV = [nbChar](unsigned char c, bool xoff, bool yoff) { return glm::vec2((c % nbChar + xoff) / float(nbChar), (c / nbChar + yoff) / float(nbChar)); };
-  for (char c : text) {
+  std::string message = text;
+  if (padding > text.size()) {
+    std::string paddingText(padding - text.size(), ' ');
+    printText(paddingText, x, y, fontsize, fontColor, fillColor);
+    message += paddingText;
+  }
+  for (char c : message) {
     glm::vec2 pos[4] = {toClip(x, y), toClip(x + 1, y), toClip(x + 1, y + 1), toClip(x, y + 1)};
     glm::vec2 uv[4] = {toUV(c, 0, 0), toUV(c, 1, 0), toUV(c, 1, 1), toUV(c, 0, 1)};
     uint k = positions.size();

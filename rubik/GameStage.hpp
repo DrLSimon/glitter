@@ -53,15 +53,20 @@ class PlayingStage final : public GameStage {
 public:
   PlayingStage() : m_displayHelp(false), m_helper(800, 800)
   {
-    const glm::vec3 textColor(1, 0, 0);
+    m_renderer.deform(false);
+    const glm::vec3 red(1, 0, 0);
+    const glm::vec3 blue(0, 0, 1);
     const glm::vec4 fillColor(0.5, 0.5, 0.5, 0.8);
     const unsigned int fontSize = 3;
-    m_renderer.deform(false);
-    m_helper.printText("1,2,3: rotate faces", 0, 0, fontSize, textColor, fillColor);
-    m_helper.printText("\x1a,\x1b  : rotate cube ", 0, 1, fontSize, textColor, fillColor);
-    m_helper.printText("       horizonttaly", 0, 2, fontSize, textColor, fillColor);
-    m_helper.printText("\x12    : rotate cube ", 0, 3, fontSize, textColor, fillColor);
-    m_helper.printText("       vertically  ", 0, 4, fontSize, textColor, fillColor);
+    const unsigned int w1 = 11;
+    const unsigned int w2 = 23;
+    m_helper.printText("1 / 2 / 3 :", 0, 0, fontSize, red, fillColor, w1);
+    m_helper.printText("rotate visible faces", w1, 0, fontSize, blue, fillColor, w2);
+    m_helper.printText("left/right:", 0, 1, fontSize, red, fillColor, w1);
+    m_helper.printText("rotate cube ", w1, 1, fontSize, blue, fillColor, w2);
+    m_helper.printText(std::string(w1, ' ') + "horizontally ", 0, 2, fontSize, blue, fillColor, w1 + w2);
+    m_helper.printText("up / down :", 0, 3, fontSize, red, fillColor, w1);
+    m_helper.printText("rotate cube vertically", w1, 3, fontSize, blue, fillColor, w2);
   }
 
   void renderFrame() override;
