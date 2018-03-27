@@ -35,12 +35,12 @@ void StartMenuStage::resize(GLFWwindow * window, int framebufferWidth, int frame
   glViewport(0, 0, framebufferWidth, framebufferHeight);
 }
 
-void PlayingStage::turnClockwise(RubikFaceName faceName)
+void PlayingStage::turnClockwise(unsigned int faceID)
 {
   if (m_renderer.isLocked()) {
     return;
   }
-  RubikFace face(faceName);
+  RubikFace face = m_renderer.getFace(faceID);
   std::array<uint, 9> pieces = m_state.piecesOnFace(face);
   m_renderer.launchFaceRotation(face, pieces);
   m_state.applyFaceRotation(face);
@@ -69,7 +69,7 @@ void PlayingStage::keyCallback(GLFWwindow * window, int key, int scancode, int a
       m_renderer.resetView();
       break;
     // case 'h':
-    //  //TODO
+    // TODO
     case GLFW_KEY_UP: {
       if (not m_renderer.isLocked()) {
         glm::vec3 right{1, 0, 0};
@@ -94,23 +94,14 @@ void PlayingStage::keyCallback(GLFWwindow * window, int key, int scancode, int a
         m_renderer.launchViewRotation(down, 1);
       }
     }
-    case 'F':
-      turnClockwise(RubikFaceName::F);
+    case '1':
+      turnClockwise(0);
       break;
-    case 'R':
-      turnClockwise(RubikFaceName::R);
+    case '2':
+      turnClockwise(1);
       break;
-    case 'T':
-      turnClockwise(RubikFaceName::T);
-      break;
-    case 'B':
-      turnClockwise(RubikFaceName::B);
-      break;
-    case 'L':
-      turnClockwise(RubikFaceName::L);
-      break;
-    case 'D':
-      turnClockwise(RubikFaceName::D);
+    case '3':
+      turnClockwise(2);
       break;
     }
   }

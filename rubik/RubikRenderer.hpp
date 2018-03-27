@@ -43,6 +43,9 @@ public:
   /// Activates / deactivates the deformation of the cube
   void deform(bool activate);
 
+  /// Gets the RubikFace according to the current view
+  RubikFace getFace(unsigned int face) const;
+
 private:
   /// A class for handling animated rotations
   class RotateAnimation {
@@ -51,18 +54,20 @@ private:
     RotateAnimation();
 
     /// Starts the animation
-    void startAnimation(const glm::vec3 & axis, float angle);
+    void startAnimation(glm::mat4 & target, const glm::vec3 & axis, float angle);
 
     /// Updates the rotation based on elapsed time
-    void update(float deltaTime, glm::mat4 & target);
+    void update(float deltaTime);
 
     /// Denotes if the animation is still going on
     bool isLocked() const;
 
   private:
-    glm::vec3 m_rotAxis; ///< rotation axis for animation
-    float m_rotAngle;    ///< rotation angle for animation
-    bool m_locked;       ///< toggle view rotation
+    glm::vec3 m_rotAxis;     ///< rotation axis for animation
+    float m_rotAngle;        ///< rotation angle for animation
+    glm::mat4 * m_target;    ///< the animated matrix
+    glm::mat4 m_finalTarget; ///< next key frame for the animated matrix
+    bool m_locked;           ///< toggle view rotation
   };
 
   /// A vao associated with a modelWorld matrix

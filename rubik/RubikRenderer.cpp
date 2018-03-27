@@ -1,8 +1,10 @@
 #include "RubikRenderer.hpp"
 #include <GLFW/glfw3.h>
 #include <functional>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <unordered_map>
 #include "RubikLogic.hpp"
 
 /// a simple struct for discrete linear range of the form {minVal, minVal+delta,...,minVal+length}
@@ -124,12 +126,47 @@ void RubikRenderer::deform(bool activate)
   m_program.unbind();
 }
 
+// Template specialization of std::hash
+namespace std
+{
+template <> struct hash<glm::ivec3> {
+public:
+  std::size_t operator()(const glm::ivec3 & v) const
+  {
+    std::size_t hashes[] = {std::hash<float>()(v.x), std::hash<float>()(v.y), std::hash<float>()(v.z)};
+    std::size_t seed = 0;
+    for (std::size_t h : hashes) {
+      // from boost::hash_combine
+      seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+    return seed;
+  }
+};
+} // namespace std
+
+RubikFace RubikRenderer::getFace(unsigned int face) const
+{
+  const glm::ivec3 normals[3] = {{0, 0, -1}, {1, 0, 0}, {0, 1, 0}};
+  assert(face < 3);
+  glm::ivec3 normal = normals[face];
+  normal = glm::ivec3(glm::round(glm::mat3(glm::transpose(m_view)) * glm::vec3(normal)));
+  const std::unordered_map<glm::ivec3, RubikFaceName> names = {
+      {{0, 0, -1}, RubikFaceName::F}, //
+      {{1, 0, 0}, RubikFaceName::R},  //
+      {{0, 1, 0}, RubikFaceName::T},  //
+      {{0, 0, 1}, RubikFaceName::B},  //
+      {{-1, 0, 0}, RubikFaceName::L}, //
+      {{0, -1, 0}, RubikFaceName::D}, //
+  };
+  return RubikFace(names.at(normal));
+}
+
 void RubikRenderer::renderFrame()
 {
   m_program.bind();
   glm::mat4 view(1);
   const float pi = glm::pi<float>();
-  view = glm::rotate(glm::mat4(1), pi / 4, {0, 1, 0});
+  view = glm::rotate(glm::mat4(1), pi / 7, {0, 1, 0});
   view = glm::rotate(glm::mat4(1), -pi / 4, {1, 0, 0}) * view * m_view;
   for (const auto & vao : m_vaos) {
     vao->updateProgram(m_program, m_proj, view);
@@ -155,7 +192,7 @@ void RubikRenderer::update()
   m_program.bind();
   m_program.setUniform("time", m_currentTime);
   m_program.unbind();
-  m_viewAnim.update(m_deltaTime, m_view);
+  m_viewAnim.update(m_deltaTime);
   for (auto & vao : m_vaos) {
     vao->update(m_deltaTime);
   }
@@ -164,7 +201,7 @@ void RubikRenderer::update()
 void RubikRenderer::launchViewRotation(const glm::vec3 & axis, float angle)
 {
   const float pi = glm::pi<float>();
-  m_viewAnim.startAnimation(axis, angle * pi / 2.);
+  m_viewAnim.startAnimation(m_view, axis, angle * pi / 2.);
 }
 
 void RubikRenderer::resetView()
@@ -213,12 +250,12 @@ void RubikRenderer::InstancedVAO::updateProgram(Program & prog, const glm::mat4 
 
 void RubikRenderer::InstancedVAO::launchRotation(const glm::vec3 & axis, float angle)
 {
-  m_anim.startAnimation(axis, angle);
+  m_anim.startAnimation(m_mw, axis, angle);
 }
 
 void RubikRenderer::InstancedVAO::update(float deltaTime)
 {
-  m_anim.update(deltaTime, m_mw);
+  m_anim.update(deltaTime);
 }
 
 bool RubikRenderer::InstancedVAO::isLocked() const
@@ -228,15 +265,18 @@ bool RubikRenderer::InstancedVAO::isLocked() const
 
 RubikRenderer::RotateAnimation::RotateAnimation() : m_locked(false) {}
 
-void RubikRenderer::RotateAnimation::startAnimation(const glm::vec3 & axis, float angle)
+void RubikRenderer::RotateAnimation::startAnimation(glm::mat4 & target, const glm::vec3 & axis, float angle)
 {
   m_rotAxis = axis;
   m_rotAngle = angle;
   m_locked = true;
+  m_target = &target;
+  m_finalTarget = glm::rotate(glm::mat4(1), angle, axis) * target;
 }
 
-void RubikRenderer::RotateAnimation::update(float deltaTime, glm::mat4 & target)
+void RubikRenderer::RotateAnimation::update(float deltaTime)
 {
+  glm::mat4 & target = *m_target;
   if (m_locked) {
     float oldAngle = m_rotAngle;
     float angle = deltaTime * 5;
@@ -244,8 +284,10 @@ void RubikRenderer::RotateAnimation::update(float deltaTime, glm::mat4 & target)
     if (oldAngle * m_rotAngle < 0) {
       m_locked = false;
       angle = oldAngle;
+      target = m_finalTarget;
+    } else {
+      target = glm::rotate(glm::mat4(1), angle, m_rotAxis) * target;
     }
-    target = glm::rotate(glm::mat4(1), angle, m_rotAxis) * target;
   }
 }
 

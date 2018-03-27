@@ -64,7 +64,7 @@ public:
   std::unique_ptr<GameStage> nextStage() const override;
 
 private:
-  void turnClockwise(RubikFaceName faceName);
+  void turnClockwise(unsigned int faceID);
 
 private:
   RubikRenderer m_renderer; ///< the rubik's cube renderer
