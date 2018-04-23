@@ -13,11 +13,10 @@ PA4Application::RenderObject::RenderObject(const glm::mat4 & modelWorld) : m_mw(
   }
 }
 
-std::shared_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createCheckerBoardCubeInstance(const glm::mat4 & modelWorld)
+std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createCheckerBoardCubeInstance(const glm::mat4 & modelWorld)
 {
-  std::shared_ptr<RenderObject> object(new RenderObject(modelWorld));
+  std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
   std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
-  object->m_diffuseTextures.push_back(texture);
   std::vector<GLubyte> checkerboard = makeCheckerBoard();
 
   texture->setData(Image<>(checkerboard.data(), 20, 20, 4), true);
@@ -33,13 +32,11 @@ std::shared_ptr<PA4Application::RenderObject> PA4Application::RenderObject::crea
   }
 
   std::shared_ptr<Program> program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"));
-  object->m_programs.push_back(program);
   program->bind();
   program->setUniform("diffuseColor", glm::vec3(1));
   program->unbind();
 
   std::shared_ptr<VAO> vao(new VAO(2));
-  object->m_vaos.push_back(vao);
   std::vector<glm::vec3> vextexPositions = {
       {-0.5, -0.5, -0.5}, {0.5, -0.5, -0.5}, {0.5, 0.5, -0.5}, {-0.5, 0.5, -0.5}, // top
       {-0.5, -0.5, 0.5},  {0.5, -0.5, 0.5},  {0.5, 0.5, 0.5},  {-0.5, 0.5, 0.5},  // bottom
@@ -68,45 +65,29 @@ std::shared_ptr<PA4Application::RenderObject> PA4Application::RenderObject::crea
   vao->setVBO(1, vertexUVs);
   vao->setIBO(ibo);
 
+  object->m_parts.emplace_back(vao, program, texture);
+
   return object;
 }
 
-void PA4Application::RenderObject::draw(GLenum mode)
+void PA4Application::RenderObject::draw()
 {
-  size_t nbObjects = m_vaos.size();
   if (m_colormap) {
     m_colormap->bind();
   }
-  for (size_t k = 0; k < nbObjects; k++) {
-    m_programs[k]->bind();
-    Texture & texture = *m_diffuseTextures[k];
-    if (m_colormap) {
-      m_colormap->attachTexture(texture);
-      m_colormap->attachToProgram(*m_programs[k], "colorSampler", Sampler::DoNotBind);
-    } else {
-      int unit = 0;
-      glActiveTexture(GL_TEXTURE0 + unit);
-      texture.bind();
-      m_programs[k]->setUniform("colorSampler", unit);
-    }
-    m_vaos[k]->draw();
-    m_programs[k]->unbind();
+  for (auto & part : m_parts) {
+    part.draw(m_colormap.get());
   }
   if (m_colormap) {
     m_colormap->unbind();
   }
 }
 
-void PA4Application::RenderObject::updateProgram(Program & prog) const {}
-
-PA4Application::RenderObject::RenderObject(const std::string & objname, const glm::mat4 & modelWorld) : m_mw(modelWorld), m_colormap(std::unique_ptr<Sampler>(new Sampler(0)))
+std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld)
 {
-  loadWavefront(objname);
-}
-
-std::shared_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld)
-{
-  return std::shared_ptr<RenderObject>(new RenderObject(objname, modelWorld));
+  std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
+  object->loadWavefront(objname);
+  return object;
 }
 
 std::vector<GLubyte> PA4Application::RenderObject::makeCheckerBoard()
@@ -139,36 +120,32 @@ void PA4Application::RenderObject::loadWavefront(const std::string & objname)
   const std::vector<glm::vec2> & vertexUVs = objLoader.vertexUVs();
   const std::vector<glm::vec4> & vertexColors = objLoader.vertexColors();
   // set up the VBOs of the master VAO
-  m_vaos.emplace_back(new VAO(2));
-  auto & vao = m_vaos.back();
+  std::shared_ptr<VAO> vao(new VAO(2));
   vao->setVBO(0, vextexPositions);
   vao->setVBO(1, vertexUVs);
-  size_t nbObjects = objLoader.nbIBOs();
-  for (size_t k = 0; k < nbObjects; k++) {
+  size_t nbParts = objLoader.nbIBOs();
+  for (size_t k = 0; k < nbParts; k++) {
     const std::vector<uint> & ibo = objLoader.ibo(k);
     if (ibo.size() == 0) {
       continue;
     }
-    if (k != 0) {
-      // push a slave VAO (sharing the VBOs with the master)
-      m_vaos.push_back(m_vaos.front()->makeSlaveVAO());
-    }
-    m_vaos.back()->setIBO(ibo);
-    m_programs.emplace_back(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"));
-    auto & program = m_programs.back();
+    std::shared_ptr<VAO> vaoSlave;
+    vaoSlave = vao->makeSlaveVAO();
+    vaoSlave->setIBO(ibo);
+    std::shared_ptr<Program> program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"));
     const SimpleMaterial & material = materials[k];
     program->bind();
     program->setUniform("diffuseColor", material.diffuse);
     program->unbind();
     Image<> colorMap = objLoader.image(material.diffuseTexName);
-    m_diffuseTextures.emplace_back(new Texture(GL_TEXTURE_2D));
-    Texture & texture = *m_diffuseTextures.back();
-    texture.setData(colorMap);
+    std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
+    texture->setData(colorMap);
+    m_parts.push_back(RenderObjectPart(vaoSlave, program, texture));
   }
   m_colormap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   m_colormap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  m_colormap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  m_colormap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  m_colormap->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+  m_colormap->setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 unsigned int PA4Application::part;
@@ -237,10 +214,8 @@ void PA4Application::update()
 
 void PA4Application::RenderObject::update(const glm::mat4 & proj, const glm::mat4 & view)
 {
-  for (auto & prog : m_programs) {
-    prog->bind();
-    prog->setUniform("MVP", proj * view * m_mw);
-    prog->unbind();
+  for (auto & part : m_parts) {
+    part.update(proj * view * m_mw);
   }
 }
 
@@ -249,11 +224,11 @@ void PA4Application::computeView(bool reset)
   if (reset) {
     const float pi = glm::pi<float>();
     m_eyePhi = pi / 5;
-    m_eyeTheta = pi / 3.;
+    m_eyeTheta = pi / 2 + pi / 10;
   }
   glm::vec3 center(0, 0, 0);
   glm::vec3 up(0, 0, -1);
-  glm::vec3 eyePos = 3.f * glm::vec3(cos(m_eyePhi) * sin(m_eyeTheta), sin(m_eyePhi) * sin(m_eyeTheta), -cos(m_eyeTheta));
+  glm::vec3 eyePos = 5.f * glm::vec3(cos(m_eyePhi) * sin(m_eyeTheta), sin(m_eyePhi) * sin(m_eyeTheta), cos(m_eyeTheta));
   m_view = glm::lookAt(eyePos, center, up);
 }
 
@@ -278,11 +253,11 @@ void PA4Application::resize(GLFWwindow * window, int framebufferWidth, int frame
 {
   PA4Application & app = *static_cast<PA4Application *>(glfwGetWindowUserPointer(window));
   float aspect = framebufferWidth / float(framebufferHeight);
-  app.m_proj = glm::perspective(90.f, aspect, 0.1f, 100.f);
+  app.m_proj = glm::perspective(120.f, aspect, 0.1f, 100.f);
   glViewport(0, 0, framebufferWidth, framebufferHeight);
 }
 
-void PA4Application::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void PA4Application::keyCallback(GLFWwindow * window, int key, int /*scancode*/, int /*action*/, int /*mods*/)
 {
   PA4Application & app = *static_cast<PA4Application *>(glfwGetWindowUserPointer(window));
   switch (key) {
@@ -290,4 +265,29 @@ void PA4Application::keyCallback(GLFWwindow * window, int key, int scancode, int
     app.computeView(true);
     break;
   }
+}
+
+PA4Application::RenderObjectPart::RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture) : m_vao(vao), m_program(program), m_texture(texture) {}
+
+void PA4Application::RenderObjectPart::draw(Sampler * colormap)
+{
+  m_program->bind();
+  if (colormap) {
+    colormap->attachTexture(*m_texture);
+    colormap->attachToProgram(*m_program, "colorSampler", Sampler::DoNotBind);
+  } else {
+    const int unit = 0;
+    glActiveTexture(GL_TEXTURE0 + unit);
+    m_texture->bind();
+    m_program->setUniform("colorSampler", unit);
+  }
+  m_vao->draw();
+  m_program->unbind();
+}
+
+void PA4Application::RenderObjectPart::update(const glm::mat4 & mvp)
+{
+  m_program->bind();
+  m_program->setUniform("MVP", mvp);
+  m_program->unbind();
 }

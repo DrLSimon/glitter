@@ -15,10 +15,10 @@ public:
   static void usage(std::string & shortDescritpion, std::string & synopsis, std::string & description);
 
 private:
-  class InstancedVAO {
+  class RenderObject {
   public:
-    InstancedVAO() = delete;
-    InstancedVAO(const InstancedVAO &) = delete;
+    RenderObject() = delete;
+    RenderObject(const RenderObject &) = delete;
 
     /**
      * @brief creates an instance from a vao and modelView matrix
@@ -26,7 +26,7 @@ private:
      * @param modelWorld the matrix transform between the object (a.k.a model) space and the camera (a.k.a view) space
      * @return the created InstancedVAO as a smart pointer
      */
-    static std::shared_ptr<InstancedVAO> createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld);
+    static std::shared_ptr<RenderObject> createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld);
 
     /**
      * @brief Draw this VAO
@@ -42,7 +42,7 @@ private:
     void updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view = glm::mat4(1)) const;
 
   private:
-    InstancedVAO(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView);
+    RenderObject(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView);
 
   private:
     std::shared_ptr<VAO> m_vao; ///< VAO
@@ -148,7 +148,7 @@ private:
   void rotateView(const glm::vec3 & axis, float angleFactor);
 
 private:
-  std::vector<std::shared_ptr<InstancedVAO>> m_vaos; ///< List of instanced VAOs (VAO + modelView matrix)
+  std::vector<std::shared_ptr<RenderObject>> m_vaos; ///< List of instanced VAOs (VAO + modelView matrix)
   Program m_program;                                 ///< A GLSL progam
   glm::mat4 m_proj;                                  ///< Projection matrix
   glm::mat4 m_view;                                  ///< worldView matrix

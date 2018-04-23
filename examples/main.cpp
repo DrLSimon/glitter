@@ -70,7 +70,7 @@ void printUsage(int argc, char * argv[])
 //-------------------- MAIN
 int main(int argc, char * argv[])
 {
-  Application * app;
+  Application * app = nullptr;
   if (argc < 2 or !strcmp(argv[1], "help")) {
     printUsage(argc, argv);
     exit(0);

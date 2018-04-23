@@ -12,7 +12,7 @@
 #include "glApi.hpp"
 #include "termcolor/termcolor.hpp"
 
-int main(int argc, char * argv[])
+int main(int /*argc*/, char * /*argv*/ [])
 {
   RubikApplication app;
   app.setCallbacks();

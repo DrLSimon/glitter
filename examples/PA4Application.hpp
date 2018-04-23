@@ -23,24 +23,45 @@ private:
   void computeView(bool reset = false);
 
 private:
+  class RenderObjectPart {
+  public:
+    RenderObjectPart() = delete;
+    RenderObjectPart(const RenderObjectPart &) = delete;
+    RenderObjectPart(RenderObjectPart &&) = default;
+
+    RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture);
+    void draw(Sampler * colormap);
+    void update(const glm::mat4 & mvp);
+
+  private:
+    std::shared_ptr<VAO> m_vao;
+    std::shared_ptr<Program> m_program;
+    std::shared_ptr<Texture> m_texture;
+  };
+
+  /**
+   * @brief The RenderObject class
+   *
+   * A RenderObject is split into parts, sharing the same geometry (VBOs), but referencing different primitive subsets (IBO) and materials (textures, ...).
+   */
   class RenderObject {
   public:
     RenderObject() = delete;
     RenderObject(const RenderObject &) = delete;
 
-    static std::shared_ptr<RenderObject> createCheckerBoardCubeInstance(const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createCheckerBoardCubeInstance(const glm::mat4 & modelWorld);
     /**
      * @brief creates an instance from a wavefront file and modelWorld matrix
      * @param objname the filename of the wavefront file
      * @param modelWorld the matrix transform between the object (a.k.a model) space and the world space
      * @return the created RenderObject as a smart pointer
      */
-    static std::shared_ptr<RenderObject> createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld);
 
     /**
-     * @brief Draw this VAO
+     * @brief Draw this RenderObject
      */
-    void draw(GLenum mode = GL_TRIANGLES);
+    void draw();
 
     /**
      * @brief update the program MVP uniform variable
@@ -54,20 +75,17 @@ private:
 
   private:
     RenderObject(const glm::mat4 & modelWorld);
-    RenderObject(const std::string & objname, const glm::mat4 & modelWorld);
     void loadWavefront(const std::string & objname);
     static std::vector<GLubyte> makeCheckerBoard();
 
   private:
-    std::vector<std::shared_ptr<VAO>> m_vaos;
     glm::mat4 m_mw; ///< modelWorld matrix
-    std::vector<std::shared_ptr<Program>> m_programs;
-    std::vector<std::shared_ptr<Texture>> m_diffuseTextures;
+    std::vector<RenderObjectPart> m_parts;
     std::unique_ptr<Sampler> m_colormap;
   };
 
 private:
-  std::vector<std::shared_ptr<RenderObject>> m_objects; ///< render objects
+  std::vector<std::unique_ptr<RenderObject>> m_objects; ///< render objects
   glm::mat4 m_proj;                                     ///< Projection matrix
   glm::mat4 m_view;                                     ///< worldView matrix
   float m_eyePhi;                                       ///< Camera position longitude angle

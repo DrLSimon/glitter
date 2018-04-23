@@ -37,7 +37,7 @@ public:
 
   void update() override;
 
-  void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods) override {}
+  void keyCallback(GLFWwindow * /* window */, int /* key */, int /* scancode */, int /* action */, int /* mods */) override {}
 
   void resize(GLFWwindow * window, int framebufferWidth, int framebufferHeight) override;
 
@@ -51,7 +51,7 @@ private:
 /// The actual playing stage
 class PlayingStage final : public GameStage {
 public:
-  PlayingStage() : m_displayHelp(false), m_helper(800, 800)
+  PlayingStage() : m_helper(800, 800), m_displayHelp(false)
   {
     m_renderer.deform(false);
     const glm::vec3 red(1, 0, 0);
@@ -100,7 +100,7 @@ public:
 
   void update() override {}
 
-  void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods) override {}
+  void keyCallback(GLFWwindow * /*window*/, int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) override {}
 
   void resize(GLFWwindow * window, int framebufferWidth, int framebufferHeight) override;
 

@@ -25,7 +25,6 @@ std::shared_ptr<VAO> makeParamSurf(DiscreteLinRange rgPhi, DiscreteLinRange rgTh
   std::vector<glm::vec3> positions;
   std::vector<glm::vec3> colors;
   std::vector<uint> ibo;
-  const float pi = glm::pi<float>();
   for (uint kPhi = 0; kPhi < rgPhi.nbVals; kPhi++) {
     for (uint kTheta = 0; kTheta < rgTheta.nbVals; kTheta++) {
       float phi = rgPhi.value(kPhi);
@@ -219,7 +218,7 @@ void RubikRenderer::launchFaceRotation(const RubikFace & face, const std::array<
   }
 }
 
-void RubikRenderer::resize(GLFWwindow * window, int framebufferWidth, int framebufferHeight)
+void RubikRenderer::resize(GLFWwindow * /*window*/, int framebufferWidth, int framebufferHeight)
 {
   float aspect = framebufferHeight / float(framebufferWidth);
   if (aspect > 1) {

@@ -64,7 +64,7 @@ void PlayingStage::update()
   m_renderer.update();
 }
 
-void PlayingStage::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void PlayingStage::keyCallback(GLFWwindow * /*window*/, int key, int /*scancode*/, int action, int /*mods*/)
 {
   if (action == GLFW_PRESS) {
     switch (key) {
@@ -143,7 +143,7 @@ void GameOverStage::renderFrame()
   m_text->draw();
 }
 
-void GameOverStage::resize(GLFWwindow * window, int framebufferWidth, int framebufferHeight)
+void GameOverStage::resize(GLFWwindow * /*window*/, int framebufferWidth, int framebufferHeight)
 {
   m_text->setWOverH(framebufferWidth / float(framebufferHeight));
   glViewport(0, 0, framebufferWidth, framebufferHeight);

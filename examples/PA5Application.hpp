@@ -26,6 +26,28 @@ private:
   void computeView(bool reset = false);
 
 private:
+  class RenderObjectPart {
+  public:
+    RenderObjectPart() = delete;
+    RenderObjectPart(const RenderObjectPart &) = delete;
+    RenderObjectPart(RenderObjectPart &&) = default;
+    RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> ntexture, std::shared_ptr<Texture> stexture);
+    void draw(Sampler * colormap, Sampler * normalmap, Sampler * specularmap);
+    void update(const glm::mat4 & proj, const glm::mat4 & view, const glm::mat4 & mw, bool displayNormals);
+
+  private:
+    std::shared_ptr<VAO> m_vao;
+    std::shared_ptr<Program> m_program;
+    std::shared_ptr<Texture> m_diffuseTexture;
+    std::shared_ptr<Texture> m_normalTexture;
+    std::shared_ptr<Texture> m_specularTexture;
+  };
+
+  /**
+   * @brief The RenderObject class
+   *
+   * A RenderObject is split into parts, sharing the same geometry (VBOs), but referencing different primitive subsets (IBO) and materials (textures, ...).
+   */
   class RenderObject {
   public:
     RenderObject() = delete;
@@ -50,9 +72,9 @@ private:
     void setProgramMaterial(std::shared_ptr<Program> & program, const SimpleMaterial & material) const;
 
     /**
-     * @brief Draw this VAO
+     * @brief Draw this RenderObject
      */
-    void draw(GLenum mode = GL_TRIANGLES);
+    void draw();
 
     /**
      * @brief update the program MVP uniform variable
@@ -63,19 +85,14 @@ private:
 
   private:
     RenderObject(const glm::mat4 & modelWorld);
-    RenderObject(const std::string & objname, const glm::mat4 & modelWorld);
     void loadWavefront(const std::string & objname);
 
   private:
-    std::vector<std::shared_ptr<VAO>> m_vaos;
     glm::mat4 m_mw; ///< modelWorld matrix
-    std::vector<std::shared_ptr<Program>> m_programs;
-    std::vector<std::shared_ptr<Texture>> m_diffuseTextures;
-    std::vector<std::shared_ptr<Texture>> m_normalTextures;
-    std::vector<std::shared_ptr<Texture>> m_specularTextures;
-    std::unique_ptr<Sampler> m_colormap;
-    std::unique_ptr<Sampler> m_specularmap;
+    std::vector<RenderObjectPart> m_parts;
+    std::unique_ptr<Sampler> m_diffusemap;
     std::unique_ptr<Sampler> m_normalmap;
+    std::unique_ptr<Sampler> m_specularmap;
   };
 
 private:

@@ -11,36 +11,32 @@
 
 PA5Application::RenderObject::RenderObject(const glm::mat4 & modelWorld) : m_mw(modelWorld)
 {
-  m_colormap = std::unique_ptr<Sampler>(new Sampler(0));
-  m_specularmap = std::unique_ptr<Sampler>(new Sampler(2));
+  m_diffusemap = std::unique_ptr<Sampler>(new Sampler(0));
   m_normalmap = std::unique_ptr<Sampler>(new Sampler(1));
+  m_specularmap = std::unique_ptr<Sampler>(new Sampler(2));
 }
 
 std::unique_ptr<PA5Application::RenderObject> PA5Application::RenderObject::createCheckerBoardPlaneInstance(const glm::mat4 & modelWorld)
 {
   std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
   std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
-  object->m_diffuseTextures.push_back(texture);
   Image<> rgbMapImage;
   std::string rgbFilename = absolutename("meshes/checkerboardRGB.png");
   rgbMapImage.data = stbi_load(rgbFilename.c_str(), &rgbMapImage.width, &rgbMapImage.height, &rgbMapImage.channels, STBI_default);
   texture->setData(rgbMapImage, true);
 
   std::shared_ptr<Texture> stexture(new Texture(GL_TEXTURE_2D));
-  object->m_specularTextures.push_back(stexture);
   stexture->setData(rgbMapImage, true);
 
   std::shared_ptr<Texture> ntexture(new Texture(GL_TEXTURE_2D));
-  object->m_normalTextures.push_back(ntexture);
   Image<> normalMapImage;
   std::string nmFilename = absolutename("meshes/checkerboardNM.png");
   normalMapImage.data = stbi_load(nmFilename.c_str(), &normalMapImage.width, &normalMapImage.height, &normalMapImage.channels, STBI_default);
   ntexture->setData(normalMapImage, true);
 
-  object->m_colormap->enableAnisotropicFiltering();
+  object->m_diffusemap->enableAnisotropicFiltering();
 
   std::shared_ptr<Program> program(new Program("shaders/simplemat.v.glsl", "shaders/simplemat.f.glsl"));
-  object->m_programs.push_back(program);
   SimpleMaterial material;
   material.name = "checkerboard";
   material.ambient = {0.1, 0.1, 0.1};
@@ -49,16 +45,9 @@ std::unique_ptr<PA5Application::RenderObject> PA5Application::RenderObject::crea
   material.shininess = 90;
   object->setProgramMaterial(program, material);
   std::shared_ptr<VAO> vao(new VAO(4));
-  object->m_vaos.push_back(vao);
-  std::vector<glm::vec3> vertexPositions = {
-      {-0.5, -0.5, -0.5}, {0.5, -0.5, -0.5}, {0.5, 0.5, -0.5}, {-0.5, 0.5, -0.5}, // front
-  };
-  std::vector<glm::vec2> vertexUVs = {
-      {0, 0}, {0, 40}, {40, 40}, {40, 0}, // front
-  };
-  std::vector<glm::vec3> vertexNormals = {
-      {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, // front
-  };
+  std::vector<glm::vec3> vertexPositions = {{-0.5, -0.5, 0}, {0.5, -0.5, 0}, {0.5, 0.5, 0}, {-0.5, 0.5, 0}};
+  std::vector<glm::vec2> vertexUVs = {{0, 0}, {0, 40}, {40, 40}, {40, 0}};
+  std::vector<glm::vec3> vertexNormals = {{0, 0, 1}, {0, 0, 1}, {0, 0, 1}, {0, 0, 1}};
   std::vector<glm::vec3> vertexTangents = {
       {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, // front
   };
@@ -71,57 +60,35 @@ std::unique_ptr<PA5Application::RenderObject> PA5Application::RenderObject::crea
   vao->setVBO(3, vertexTangents);
   vao->setIBO(ibo);
 
+  object->m_parts.emplace_back(vao, program, texture, ntexture, stexture);
   return object;
 }
 
-void PA5Application::RenderObject::draw(GLenum mode)
+void PA5Application::RenderObject::draw()
 {
-  size_t nbObjects = m_vaos.size();
-  m_colormap->bind();
+  m_diffusemap->bind();
   m_normalmap->bind();
   m_specularmap->bind();
-  for (size_t k = 0; k < nbObjects; k++) {
-    m_programs[k]->bind();
-    Texture & texture = *m_diffuseTextures[k];
-    m_colormap->attachTexture(texture);
-    Texture & ntexture = *m_normalTextures[k];
-    m_normalmap->attachTexture(ntexture);
-    Texture & stexture = *m_specularTextures[k];
-    m_specularmap->attachTexture(stexture);
-    m_vaos[k]->draw();
-    m_programs[k]->unbind();
+  for (auto & part : m_parts) {
+    part.draw(m_diffusemap.get(), m_normalmap.get(), m_specularmap.get());
   }
-  m_colormap->unbind();
+  m_diffusemap->unbind();
   m_normalmap->unbind();
   m_specularmap->unbind();
 }
 
 void PA5Application::RenderObject::update(const glm::mat4 & proj, const glm::mat4 & view)
 {
-  for (auto & prog : m_programs) {
-    prog->bind();
-    prog->setUniform("M", m_mw);
-    prog->setUniform("V", view);
-    prog->setUniform("P", proj);
-    prog->setUniform("positionCameraInWorld", glm::vec3(glm::inverse(view) * glm::vec4(0, 0, 0, 1)));
-    if (displayNormals) {
-      prog->setUniform("displayNormals", 1);
-    } else {
-      prog->setUniform("displayNormals", 0);
-    }
-    prog->unbind();
+  for (auto & part : m_parts) {
+    part.update(proj, view, m_mw, displayNormals);
   }
-}
-
-PA5Application::RenderObject::RenderObject(const std::string & objname, const glm::mat4 & modelWorld)
-    : m_mw(modelWorld), m_colormap(std::unique_ptr<Sampler>(new Sampler(0))), m_specularmap(std::unique_ptr<Sampler>(new Sampler(2))), m_normalmap(std::unique_ptr<Sampler>(new Sampler(1)))
-{
-  loadWavefront(objname);
 }
 
 std::unique_ptr<PA5Application::RenderObject> PA5Application::RenderObject::createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld)
 {
-  return std::unique_ptr<RenderObject>(new RenderObject(objname, modelWorld));
+  std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
+  object->loadWavefront(objname);
+  return object;
 }
 
 void PA5Application::RenderObject::setProgramMaterial(std::shared_ptr<Program> & program, const SimpleMaterial & material) const
@@ -137,8 +104,9 @@ void PA5Application::RenderObject::setProgramMaterial(std::shared_ptr<Program> &
   program->setUniform("material.diffuse", material.diffuse);
   program->setUniform("material.specular", material.specular);
   program->setUniform("material.shininess", material.shininess);
-  m_colormap->attachToProgram(*program, "material.colormap", Sampler::DoNotBind);
+  m_diffusemap->attachToProgram(*program, "material.colormap", Sampler::DoNotBind);
   m_normalmap->attachToProgram(*program, "material.normalmap", Sampler::DoNotBind);
+  m_specularmap->attachToProgram(*program, "material.specularmap", Sampler::DoNotBind);
   program->unbind();
 }
 
@@ -151,52 +119,47 @@ void PA5Application::RenderObject::loadWavefront(const std::string & objname)
   std::vector<glm::vec3> vertexNormals = objLoader.vertexNormals();
   std::vector<glm::vec3> vertexTangents = objLoader.vertexTangents();
   // set up the VBOs of the master VAO
-  m_vaos.emplace_back(new VAO(4));
-  auto & vao = m_vaos.back();
+  std::shared_ptr<VAO> vao(new VAO(4));
   vao->setVBO(0, vertexPositions);
   vao->setVBO(1, vertexUVs);
   vao->setVBO(2, vertexNormals);
   vao->setVBO(3, vertexTangents);
-  size_t nbObjects = objLoader.nbIBOs();
-  for (size_t k = 0; k < nbObjects; k++) {
+  size_t nbParts = objLoader.nbIBOs();
+  for (size_t k = 0; k < nbParts; k++) {
     const std::vector<uint> & ibo = objLoader.ibo(k);
     if (ibo.size() == 0) {
       continue;
     }
-    if (k != 0) {
-      // push a slave VAO (sharing the VBOs with the master)
-      m_vaos.push_back(m_vaos.front()->makeSlaveVAO());
-    }
-    m_vaos.back()->setIBO(ibo);
-    m_programs.emplace_back(new Program("shaders/simplemat.v.glsl", "shaders/simplemat.f.glsl"));
-    auto & program = m_programs.back();
+    std::shared_ptr<VAO> vaoSlave;
+    vaoSlave = vao->makeSlaveVAO();
+    vaoSlave->setIBO(ibo);
+
+    std::shared_ptr<Program> program(new Program("shaders/simplemat.v.glsl", "shaders/simplemat.f.glsl"));
     const SimpleMaterial & material = materials[k];
     setProgramMaterial(program, material);
     Image<> colorMap = objLoader.image(material.diffuseTexName);
-    m_diffuseTextures.emplace_back(new Texture(GL_TEXTURE_2D));
-    Texture & texture = *m_diffuseTextures.back();
-    texture.setData(colorMap);
+    std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
+    texture->setData(colorMap);
     Image<> normalMap = objLoader.image(material.normalTexName);
-    m_normalTextures.emplace_back(new Texture(GL_TEXTURE_2D));
-    Texture & ntexture = *m_normalTextures.back();
-    ntexture.setData(normalMap);
+    std::shared_ptr<Texture> ntexture(new Texture(GL_TEXTURE_2D));
+    ntexture->setData(normalMap);
     Image<> specularMap = objLoader.image(material.specularTexName);
-    m_specularTextures.emplace_back(new Texture(GL_TEXTURE_2D));
-    Texture & stexture = *m_specularTextures.back();
-    stexture.setData(specularMap);
+    std::shared_ptr<Texture> stexture(new Texture(GL_TEXTURE_2D));
+    stexture->setData(specularMap);
+    m_parts.emplace_back(vaoSlave, program, texture, ntexture, stexture);
   }
-  m_colormap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  m_colormap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  m_colormap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  m_colormap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  m_diffusemap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  m_diffusemap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  m_diffusemap->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+  m_diffusemap->setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
   m_normalmap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   m_normalmap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  m_normalmap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  m_normalmap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  m_normalmap->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+  m_normalmap->setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
   m_specularmap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   m_specularmap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  m_specularmap->setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  m_specularmap->setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  m_specularmap->setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+  m_specularmap->setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 bool PA5Application::displayNormals;
@@ -214,8 +177,9 @@ PA5Application::PA5Application(int windowWidth, int windowHeight) : Application(
   m_objects.push_back(RenderObject::createCheckerBoardPlaneInstance(mw));
   const float pi = glm::pi<float>();
   mw = glm::mat4(1);
-  mw = glm::translate(mw, {0.75, 0, 0});
+  mw = glm::translate(mw, {1., 0, 0});
   mw = glm::rotate(mw, -pi / 2, {1, 0, 0});
+  mw = glm::rotate(mw, -5 * pi / 6, {0, 1, 0});
   mw = glm::scale(mw, glm::vec3(0.25));
   m_objects.push_back(RenderObject::createWavefrontInstance("meshes/Tron/TronLightCycle.obj", mw));
   mw = glm::mat4(1);
@@ -272,7 +236,7 @@ void PA5Application::computeView(bool reset)
   }
   glm::vec3 center(0, 0, 0);
   glm::vec3 up(0, 0, -1);
-  glm::vec3 eyePos = 3.f * glm::vec3(cos(m_eyePhi) * sin(m_eyeTheta), sin(m_eyePhi) * sin(m_eyeTheta), cos(m_eyeTheta));
+  glm::vec3 eyePos = 5.f * glm::vec3(cos(m_eyePhi) * sin(m_eyeTheta), sin(m_eyePhi) * sin(m_eyeTheta), cos(m_eyeTheta));
   m_view = glm::lookAt(eyePos, center, up);
 }
 
@@ -303,11 +267,11 @@ void PA5Application::resize(GLFWwindow * window, int framebufferWidth, int frame
 {
   PA5Application & app = *static_cast<PA5Application *>(glfwGetWindowUserPointer(window));
   float aspect = framebufferWidth / float(framebufferHeight);
-  app.m_proj = glm::perspective(90.f, aspect, 0.1f, 100.f);
+  app.m_proj = glm::perspective(120.f, aspect, 0.1f, 100.f);
   glViewport(0, 0, framebufferWidth, framebufferHeight);
 }
 
-void PA5Application::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void PA5Application::keyCallback(GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/)
 {
   PA5Application & app = *static_cast<PA5Application *>(glfwGetWindowUserPointer(window));
   switch (key) {
@@ -320,4 +284,35 @@ void PA5Application::keyCallback(GLFWwindow * window, int key, int scancode, int
     }
     break;
   }
+}
+
+PA5Application::RenderObjectPart::RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> ntexture,
+                                                   std::shared_ptr<Texture> stexture)
+    : m_vao(vao), m_program(program), m_diffuseTexture(texture), m_normalTexture(ntexture), m_specularTexture(stexture)
+{
+}
+
+void PA5Application::RenderObjectPart::draw(Sampler * colormap, Sampler * normalmap, Sampler * specularmap)
+{
+  m_program->bind();
+  colormap->attachTexture(*m_diffuseTexture);
+  normalmap->attachTexture(*m_normalTexture);
+  specularmap->attachTexture(*m_specularTexture);
+  m_vao->draw();
+  m_program->unbind();
+}
+
+void PA5Application::RenderObjectPart::update(const glm::mat4 & proj, const glm::mat4 & view, const glm::mat4 & mw, bool displayNormals)
+{
+  m_program->bind();
+  m_program->setUniform("M", mw);
+  m_program->setUniform("V", view);
+  m_program->setUniform("P", proj);
+  m_program->setUniform("positionCameraInWorld", glm::vec3(glm::inverse(view) * glm::vec4(0, 0, 0, 1)));
+  if (displayNormals) {
+    m_program->setUniform("displayNormals", 1);
+  } else {
+    m_program->setUniform("displayNormals", 0);
+  }
+  m_program->unbind();
 }

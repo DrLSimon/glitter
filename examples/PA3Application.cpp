@@ -1,10 +1,11 @@
 #define GLM_FORCE_RADIANS
 #define GLM_ENABLE_EXPERIMENTAL
-#include "PA3Application.hpp"
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include "PA3Application.hpp"
 #include "utils.hpp"
 
 PA3Application::PA3Application(int windowWidth, int windowHeight)
@@ -43,7 +44,7 @@ void PA3Application::makeASphere(unsigned int nbPhi, unsigned int nbTheta)
   std::shared_ptr<VAO> vao = makeParamSurf(DiscreteLinRange(nbPhi, 0, 2 * pi), DiscreteLinRange(nbTheta, 0, pi), posFunc, true, false);
   glm::mat4 mw(1);
   mw = glm::scale(mw, {0.2, 0.2, 0.2});
-  m_vaos.push_back(InstancedVAO::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(vao, mw));
 }
 
 void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float smallRadius)
@@ -56,7 +57,7 @@ void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float 
   mw = glm::translate(mw, {0.5, 0, 0});
   mw = glm::rotate(mw, 3 * glm::pi<float>() / 4, {1, 0, 1});
   mw = glm::scale(mw, {0.2, 0.2, 0.2});
-  m_vaos.push_back(InstancedVAO::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(vao, mw));
 }
 
 void PA3Application::makeAShell(unsigned int nbPhi, unsigned int nbTheta)
@@ -69,7 +70,7 @@ void PA3Application::makeAShell(unsigned int nbPhi, unsigned int nbTheta)
   mw = glm::translate(mw, {-0.5, 0, 0});
   mw = glm::rotate(mw, 3 * glm::pi<float>() / 4, {1, 0, 1});
   mw = glm::scale(mw, {0.05, 0.05, 0.05});
-  m_vaos.push_back(InstancedVAO::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(vao, mw));
 }
 
 void PA3Application::initGLState() const
@@ -141,7 +142,7 @@ void PA3Application::resize(GLFWwindow * window, int framebufferWidth, int frame
   glViewport(0, 0, framebufferWidth, framebufferHeight);
 }
 
-void PA3Application::keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void PA3Application::keyCallback(GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/)
 {
   PA3Application & app = *static_cast<PA3Application *>(glfwGetWindowUserPointer(window));
   switch (key) {
@@ -175,21 +176,21 @@ void PA3Application::usage(std::string & shortDescritpion, std::string & synopsi
                 "     R                reset the view\n";
 }
 
-PA3Application::InstancedVAO::InstancedVAO(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld) : m_vao(vao), m_mw(modelWorld) {}
+PA3Application::RenderObject::RenderObject(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld) : m_vao(vao), m_mw(modelWorld) {}
 
-std::shared_ptr<PA3Application::InstancedVAO> PA3Application::InstancedVAO::createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView)
+std::shared_ptr<PA3Application::RenderObject> PA3Application::RenderObject::createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView)
 {
-  return std::shared_ptr<InstancedVAO>(new InstancedVAO(vao, modelView));
+  return std::shared_ptr<RenderObject>(new RenderObject(vao, modelView));
 }
 
-void PA3Application::InstancedVAO::draw(GLenum mode) const
+void PA3Application::RenderObject::draw(GLenum mode) const
 {
   if (m_vao) {
     m_vao->draw(mode);
   }
 }
 
-void PA3Application::InstancedVAO::updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view) const
+void PA3Application::RenderObject::updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view) const
 {
   prog.setUniform("MVP", proj * view * m_mw);
 }
