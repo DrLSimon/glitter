@@ -41,8 +41,7 @@ public:
    * @brief constructs a buffer of a given type
    * @param target the desired type (VBO or IBO)
    *
-   * @note PA1: This method  allocates GPU memory for the buffer
-   * and sets up the type of Buffer as a VBO or an IBO.
+   * @note PA1: This method  allocates GPU memory for the buffer.
    */
   Buffer(GLenum target = GL_ARRAY_BUFFER);
 
@@ -293,8 +292,7 @@ public:
   /**
    * @brief Destructor
    *
-   * @note PA1: At destruction, GPU memory must be released. Do not
-   * forget to dettach the shaders before releasing the program memory.
+   * @note PA1: At destruction, GPU memory must be released. 
    */
   ~Program();
 
