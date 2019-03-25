@@ -7,7 +7,7 @@ project(GLITTER)
 # +------------------------------------------------------------------+
 # |  Compilation flags                                               |
 # +------------------------------------------------------------------+
-add_definitions("-std=c++11")
+set (CMAKE_CXX_STANDARD 11)
 add_definitions(-Wall -Wextra)
 add_definitions(-DRESOURCE_DIR=\"${CMAKE_SOURCE_DIR}\")
 

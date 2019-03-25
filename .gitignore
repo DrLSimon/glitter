@@ -2,9 +2,8 @@
 .DS_Store
 *~
 *#
-build/*
+build*/*
+ext/*
 *.swp
 *.swo
-
-
 CMakeLists.txt.user
