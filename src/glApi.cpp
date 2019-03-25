@@ -47,6 +47,9 @@ uint Buffer::attributeSize() const
 
 VAO::VAO(uint nbVBO) : m_location(0), m_vbos(nbVBO), m_ibo(GL_ELEMENT_ARRAY_BUFFER)
 {
+  for (auto & vbo : m_vbos) {
+    vbo = std::shared_ptr<Buffer>(new Buffer(GL_ARRAY_BUFFER));
+  }
   assert(nbVBO <= 16); // You may want to replace 16 by the real hardware limitation
   std::cerr << __PRETTY_FUNCTION__ << ": You must allocate GPU memory for this instance" << std::endl;
   assert(false);

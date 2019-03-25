@@ -165,13 +165,10 @@ public:
    *
    * @note PA1 (part 2): this method must do the following operations:
    * 	- check that @p attributeIndex is not out of bounds
-   * 	- bind this VAO
-   * 	- instantiate a new VBO for this index if not already done
    * 	- set up this VBO with the @p values
    * 	- encapsulate the VBO GPU location in this VAO GPU location using VAO::encapsulateVBO
-   * 	- reset the openGL state so that no VAO is left bound
    *
-   * @see encapsulateVBO
+   * @see VAO::encapsulateVBO
    */
   template <typename T> void setVBO(uint attributeIndex, const std::vector<T> & values);
 
@@ -211,10 +208,11 @@ private:
    *
    * @note PA1 (part 2): the VBO is encapsultated at the @p attributeIndex anchor point of this VAO.
    * To do so, the method must:
+   * 	  - bind this VAO
    * 		- enable the @p attributeIndex anchor point
    * 		- bind the buffer to the OpenGL state
    * 		- store the formatting information for the @p attributeIndex anchor point
-   * 		- reset the OpenGL state so that no VBO is left bound
+   * 		- reset the OpenGL state so that no VBO nor VAO is left bound
    */
   void encapsulateVBO(unsigned int attributeIndex) const;
 
@@ -292,7 +290,7 @@ public:
   /**
    * @brief Destructor
    *
-   * @note PA1: At destruction, GPU memory must be released. 
+   * @note PA1: At destruction, GPU memory must be released.
    */
   ~Program();
 
