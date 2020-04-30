@@ -92,13 +92,13 @@ $ ./glitter pa2
   (NDC). In order to instanciate an object at a given location and with a given
   pose, we must differentiate between the object coordinates and the NDC ones.
   Such a transform is often called MVP for <em>Model View Projection</em>
-  tranform.
+  tranform. It is also useful to split this transform in 3 steps as M, V and P.
   </p>
 
   <p>
-  In this part you must define a uniform GLSL matrix (or several if
-  you are willing to decompose the transform).  Modify the vertex shader to
-  include the needed MVP matrix. 
+  In this part you must define 3 uniform GLSL matrices <em>M</em>, <em>V</em> and 
+  <em>P</em> (please conform to this naming convention for later labs to work properly).
+  Modify the vertex shader to include these matrices.
   </p>
                                                    
   <p>
