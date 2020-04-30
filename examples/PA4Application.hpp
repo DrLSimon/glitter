@@ -29,13 +29,14 @@ private:
     RenderObjectPart(const RenderObjectPart &) = delete;
     RenderObjectPart(RenderObjectPart &&) = default;
 
-    RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture);
+    RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, const glm::vec3 & diffuse, std::shared_ptr<Texture> texture);
     void draw(Sampler * colormap);
-    void update(const glm::mat4 & mvp);
+    void update(const glm::mat4 & mw);
 
   private:
     std::shared_ptr<VAO> m_vao;
     std::shared_ptr<Program> m_program;
+    glm::vec3 m_diffuse;
     std::shared_ptr<Texture> m_texture;
   };
 
@@ -49,14 +50,15 @@ private:
     RenderObject() = delete;
     RenderObject(const RenderObject &) = delete;
 
-    static std::unique_ptr<RenderObject> createCheckerBoardCubeInstance(const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createCheckerBoardCubeInstance(const std::shared_ptr<Program> & program, const glm::mat4 & modelWorld);
     /**
      * @brief creates an instance from a wavefront file and modelWorld matrix
+     * @param program the GLSL program
      * @param objname the filename of the wavefront file
      * @param modelWorld the matrix transform between the object (a.k.a model) space and the world space
      * @return the created RenderObject as a smart pointer
      */
-    static std::unique_ptr<RenderObject> createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld);
+    static std::unique_ptr<RenderObject> createWavefrontInstance(const std::shared_ptr<Program> & program, const std::string & objname, const glm::mat4 & modelWorld);
 
     /**
      * @brief Draw this RenderObject
@@ -64,27 +66,24 @@ private:
     void draw();
 
     /**
-     * @brief update the program MVP uniform variable
-     * @param prog the target program
-     * @param proj the projection matrix
-     * @param view the worldView matrix
+     * @brief update the program M uniform variable
      */
-    void updateProgram(Program & prog) const;
-
-    void update(const glm::mat4 & proj, const glm::mat4 & view);
+    void update();
 
   private:
-    RenderObject(const glm::mat4 & modelWorld);
+    RenderObject(const std::shared_ptr<Program> & program, const glm::mat4 & modelWorld);
     void loadWavefront(const std::string & objname);
     static std::vector<GLubyte> makeCheckerBoard();
 
   private:
+    std::shared_ptr<Program> m_program;
     glm::mat4 m_mw; ///< modelWorld matrix
     std::vector<RenderObjectPart> m_parts;
     std::unique_ptr<Sampler> m_colormap;
   };
 
 private:
+  std::shared_ptr<Program> m_program;                   ///< GLSL program
   std::vector<std::unique_ptr<RenderObject>> m_objects; ///< render objects
   glm::mat4 m_proj;                                     ///< Projection matrix
   glm::mat4 m_view;                                     ///< worldView matrix

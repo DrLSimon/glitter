@@ -22,31 +22,30 @@ private:
 
     /**
      * @brief creates an instance from a vao and modelView matrix
+     * @param program  a GLSL program
      * @param vao  the VAO to be instanciated
      * @param modelWorld the matrix transform between the object (a.k.a model) space and the camera (a.k.a view) space
      * @return the created InstancedVAO as a smart pointer
      */
-    static std::shared_ptr<RenderObject> createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld);
+    static std::shared_ptr<RenderObject> createInstance(const std::shared_ptr<Program> & prog, const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld);
 
     /**
      * @brief Draw this VAO
      */
     void draw(GLenum mode = GL_TRIANGLES) const;
 
+  private:
+    RenderObject(const std::shared_ptr<Program> & prog, const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView);
+
     /**
-     * @brief update the program MVP uniform variable
-     * @param prog the target program
-     * @param proj the projection matrix
-     * @param view the worldView matrix
+     * @brief update the program M uniform variable
      */
-    void updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view = glm::mat4(1)) const;
+    void updateProgram() const;
 
   private:
-    RenderObject(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView);
-
-  private:
-    std::shared_ptr<VAO> m_vao; ///< VAO
-    glm::mat4 m_mw;             ///< modelWorld matrix
+    std::shared_ptr<Program> m_prog; ///< VAO
+    std::shared_ptr<VAO> m_vao;      ///< VAO
+    glm::mat4 m_mw;                  ///< modelWorld matrix
   };
 
 private:
@@ -149,7 +148,7 @@ private:
 
 private:
   std::vector<std::shared_ptr<RenderObject>> m_vaos; ///< List of instanced VAOs (VAO + modelView matrix)
-  Program m_program;                                 ///< A GLSL progam
+  std::shared_ptr<Program> m_program;                ///< A GLSL progam
   glm::mat4 m_proj;                                  ///< Projection matrix
   glm::mat4 m_view;                                  ///< worldView matrix
   float m_currentTime;                               ///< elapsed time since first frame

@@ -9,7 +9,7 @@
 #include "utils.hpp"
 
 PA3Application::PA3Application(int windowWidth, int windowHeight)
-    : Application(windowWidth, windowHeight, "Application for PA3"), m_program("shaders/simple3d.v.glsl", "shaders/simple3d.f.glsl"), m_view(1), m_currentTime(0), m_deltaTime(0),
+    : Application(windowWidth, windowHeight, "Application for PA3"), m_program(new Program("shaders/simple3d.v.glsl", "shaders/simple3d.f.glsl")), m_view(1), m_currentTime(0), m_deltaTime(0),
       m_renderMode(GL_TRIANGLES)
 {
   GLFWwindow * window = glfwGetCurrentContext();
@@ -44,7 +44,7 @@ void PA3Application::makeASphere(unsigned int nbPhi, unsigned int nbTheta)
   std::shared_ptr<VAO> vao = makeParamSurf(DiscreteLinRange(nbPhi, 0, 2 * pi), DiscreteLinRange(nbTheta, 0, pi), posFunc, true, false);
   glm::mat4 mw(1);
   mw = glm::scale(mw, {0.2, 0.2, 0.2});
-  m_vaos.push_back(RenderObject::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(m_program, vao, mw));
 }
 
 void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float smallRadius)
@@ -57,7 +57,7 @@ void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float 
   mw = glm::translate(mw, {0.5, 0, 0});
   mw = glm::rotate(mw, 3 * glm::pi<float>() / 4, {1, 0, 1});
   mw = glm::scale(mw, {0.2, 0.2, 0.2});
-  m_vaos.push_back(RenderObject::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(m_program, vao, mw));
 }
 
 void PA3Application::makeAShell(unsigned int nbPhi, unsigned int nbTheta)
@@ -70,7 +70,7 @@ void PA3Application::makeAShell(unsigned int nbPhi, unsigned int nbTheta)
   mw = glm::translate(mw, {-0.5, 0, 0});
   mw = glm::rotate(mw, 3 * glm::pi<float>() / 4, {1, 0, 1});
   mw = glm::scale(mw, {0.05, 0.05, 0.05});
-  m_vaos.push_back(RenderObject::createInstance(vao, mw));
+  m_vaos.push_back(RenderObject::createInstance(m_program, vao, mw));
 }
 
 void PA3Application::initGLState() const
@@ -83,12 +83,9 @@ void PA3Application::renderFrame()
 {
   std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
   glClear(GL_COLOR_BUFFER_BIT);
-  m_program.bind();
   for (const auto & vao : m_vaos) {
-    vao->updateProgram(m_program, m_proj, m_view);
     vao->draw(m_renderMode);
   }
-  m_program.unbind();
 }
 
 void PA3Application::update()
@@ -96,9 +93,11 @@ void PA3Application::update()
   float prevTime = m_currentTime;
   m_currentTime = glfwGetTime();
   m_deltaTime = m_currentTime - prevTime;
-  m_program.bind();
-  m_program.setUniform("time", m_currentTime);
-  m_program.unbind();
+  m_program->bind();
+  m_program->setUniform("time", m_currentTime);
+  m_program->setUniform("V", m_view);
+  m_program->setUniform("P", m_proj);
+  m_program->unbind();
   continuousKey();
 }
 
@@ -176,21 +175,24 @@ void PA3Application::usage(std::string & shortDescritpion, std::string & synopsi
                 "     R                reset the view\n";
 }
 
-PA3Application::RenderObject::RenderObject(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld) : m_vao(vao), m_mw(modelWorld) {}
+PA3Application::RenderObject::RenderObject(const std::shared_ptr<Program> & prog, const std::shared_ptr<VAO> & vao, const glm::mat4 & modelWorld) : m_prog(prog), m_vao(vao), m_mw(modelWorld) {}
 
-std::shared_ptr<PA3Application::RenderObject> PA3Application::RenderObject::createInstance(const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView)
+std::shared_ptr<PA3Application::RenderObject> PA3Application::RenderObject::createInstance(const std::shared_ptr<Program> & prog, const std::shared_ptr<VAO> & vao, const glm::mat4 & modelView)
 {
-  return std::shared_ptr<RenderObject>(new RenderObject(vao, modelView));
+  return std::shared_ptr<RenderObject>(new RenderObject(prog, vao, modelView));
 }
 
 void PA3Application::RenderObject::draw(GLenum mode) const
 {
-  if (m_vao) {
+  if (m_vao and m_prog) {
+    m_prog->bind();
+    updateProgram();
     m_vao->draw(mode);
+    m_prog->unbind();
   }
 }
 
-void PA3Application::RenderObject::updateProgram(Program & prog, const glm::mat4 & proj, const glm::mat4 & view) const
+void PA3Application::RenderObject::updateProgram() const
 {
-  prog.setUniform("MVP", proj * view * m_mw);
+  m_prog->setUniform("M", m_mw);
 }

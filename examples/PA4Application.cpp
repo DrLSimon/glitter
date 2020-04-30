@@ -6,16 +6,16 @@
 #include "ObjLoader.hpp"
 #include "utils.hpp"
 
-PA4Application::RenderObject::RenderObject(const glm::mat4 & modelWorld) : m_mw(modelWorld)
+PA4Application::RenderObject::RenderObject(const std::shared_ptr<Program> & program, const glm::mat4 & modelWorld) : m_program(program), m_mw(modelWorld)
 {
   if (part >= 3) {
     m_colormap = std::unique_ptr<Sampler>(new Sampler(0));
   }
 }
 
-std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createCheckerBoardCubeInstance(const glm::mat4 & modelWorld)
+std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createCheckerBoardCubeInstance(const std::shared_ptr<Program> & program, const glm::mat4 & modelWorld)
 {
-  std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
+  std::unique_ptr<RenderObject> object(new RenderObject(program, modelWorld));
   std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
   std::vector<GLubyte> checkerboard = makeCheckerBoard();
 
@@ -31,7 +31,6 @@ std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::crea
     object->m_colormap->enableAnisotropicFiltering();
   }
 
-  std::shared_ptr<Program> program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"));
   program->bind();
   program->setUniform("diffuseColor", glm::vec3(1));
   program->unbind();
@@ -65,13 +64,15 @@ std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::crea
   vao->setVBO(1, vertexUVs);
   vao->setIBO(ibo);
 
-  object->m_parts.emplace_back(vao, program, texture);
+  glm::vec3 diffuse(1);
+  object->m_parts.emplace_back(vao, program, diffuse, texture);
 
   return object;
 }
 
 void PA4Application::RenderObject::draw()
 {
+  update();
   if (m_colormap) {
     m_colormap->bind();
   }
@@ -83,9 +84,9 @@ void PA4Application::RenderObject::draw()
   }
 }
 
-std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createWavefrontInstance(const std::string & objname, const glm::mat4 & modelWorld)
+std::unique_ptr<PA4Application::RenderObject> PA4Application::RenderObject::createWavefrontInstance(const std::shared_ptr<Program> & program, const std::string & objname, const glm::mat4 & modelWorld)
 {
-  std::unique_ptr<RenderObject> object(new RenderObject(modelWorld));
+  std::unique_ptr<RenderObject> object(new RenderObject(program, modelWorld));
   object->loadWavefront(objname);
   return object;
 }
@@ -132,15 +133,11 @@ void PA4Application::RenderObject::loadWavefront(const std::string & objname)
     std::shared_ptr<VAO> vaoSlave;
     vaoSlave = vao->makeSlaveVAO();
     vaoSlave->setIBO(ibo);
-    std::shared_ptr<Program> program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"));
     const SimpleMaterial & material = materials[k];
-    program->bind();
-    program->setUniform("diffuseColor", material.diffuse);
-    program->unbind();
     Image<> colorMap = objLoader.image(material.diffuseTexName);
     std::shared_ptr<Texture> texture(new Texture(GL_TEXTURE_2D));
     texture->setData(colorMap);
-    m_parts.push_back(RenderObjectPart(vaoSlave, program, texture));
+    m_parts.push_back(RenderObjectPart(vaoSlave, m_program, material.diffuse, texture));
   }
   m_colormap->setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   m_colormap->setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -150,7 +147,8 @@ void PA4Application::RenderObject::loadWavefront(const std::string & objname)
 
 unsigned int PA4Application::part;
 
-PA4Application::PA4Application(int windowWidth, int windowHeight) : Application(windowWidth, windowHeight), m_currentTime(0), m_deltaTime(0)
+PA4Application::PA4Application(int windowWidth, int windowHeight)
+    : Application(windowWidth, windowHeight), m_currentTime(0), m_deltaTime(0), m_program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"))
 {
   GLFWwindow * window = glfwGetCurrentContext();
   glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
@@ -160,16 +158,16 @@ PA4Application::PA4Application(int windowWidth, int windowHeight) : Application(
   glm::mat4 mw(1);
   mw = glm::translate(mw, {0, 1.1, 0});
   mw = glm::scale(mw, glm::vec3(50, 50, 0.1));
-  m_objects.push_back(RenderObject::createCheckerBoardCubeInstance(mw));
+  m_objects.push_back(RenderObject::createCheckerBoardCubeInstance(m_program, mw));
   if (part >= 3) {
     const float pi = glm::pi<float>();
     mw = glm::mat4(1);
     mw = glm::rotate(mw, -pi / 2, {1, 0, 0});
     mw = glm::scale(mw, glm::vec3(0.25));
-    m_objects.push_back(RenderObject::createWavefrontInstance("meshes/Tron/TronLightCycle.obj", mw));
+    m_objects.push_back(RenderObject::createWavefrontInstance(m_program, "meshes/Tron/TronLightCycle.obj", mw));
     mw = glm::mat4(1);
     mw = glm::translate(mw, {0, -3, 0});
-    m_objects.push_back(RenderObject::createWavefrontInstance("meshes/capsule.obj", mw));
+    m_objects.push_back(RenderObject::createWavefrontInstance(m_program, "meshes/capsule.obj", mw));
   }
 }
 
@@ -206,16 +204,19 @@ void PA4Application::update()
   float prevTime = m_currentTime;
   m_currentTime = glfwGetTime();
   m_deltaTime = m_currentTime - prevTime;
+
+  m_program->bind();
+  m_program->setUniform("V", m_view);
+  m_program->setUniform("P", m_proj);
+  m_program->unbind();
+
   continuousKey();
-  for (auto & object : m_objects) {
-    object->update(m_proj, m_view);
-  }
 }
 
-void PA4Application::RenderObject::update(const glm::mat4 & proj, const glm::mat4 & view)
+void PA4Application::RenderObject::update()
 {
   for (auto & part : m_parts) {
-    part.update(proj * view * m_mw);
+    part.update(m_mw);
   }
 }
 
@@ -267,11 +268,15 @@ void PA4Application::keyCallback(GLFWwindow * window, int key, int /*scancode*/,
   }
 }
 
-PA4Application::RenderObjectPart::RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, std::shared_ptr<Texture> texture) : m_vao(vao), m_program(program), m_texture(texture) {}
+PA4Application::RenderObjectPart::RenderObjectPart(std::shared_ptr<VAO> vao, std::shared_ptr<Program> program, const glm::vec3 & diffuse, std::shared_ptr<Texture> texture)
+    : m_vao(vao), m_program(program), m_diffuse(diffuse), m_texture(texture)
+{
+}
 
 void PA4Application::RenderObjectPart::draw(Sampler * colormap)
 {
   m_program->bind();
+  m_program->setUniform("diffuseColor", m_diffuse);
   if (colormap) {
     colormap->attachTexture(*m_texture);
     colormap->attachToProgram(*m_program, "colorSampler", Sampler::DoNotBind);
@@ -285,9 +290,9 @@ void PA4Application::RenderObjectPart::draw(Sampler * colormap)
   m_program->unbind();
 }
 
-void PA4Application::RenderObjectPart::update(const glm::mat4 & mvp)
+void PA4Application::RenderObjectPart::update(const glm::mat4 & mw)
 {
   m_program->bind();
-  m_program->setUniform("MVP", mvp);
+  m_program->setUniform("M", mw);
   m_program->unbind();
 }

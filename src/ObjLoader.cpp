@@ -171,7 +171,11 @@ void ObjLoader::parseFile(const std::string & filename)
           m_vertexUVs.push_back({0, 0});
         }
         //! note: beware attrib.colors is not empty even if no colors were specified (it is filled with black colors)
-        m_vertexColors.push_back(glm::vec4(1.0, 0.0, 0.5, 1.0f));
+        tinyobj::real_t cR = attrib.colors[4 * idx.vertex_index + 0];
+        tinyobj::real_t cG = attrib.colors[4 * idx.vertex_index + 1];
+        tinyobj::real_t cB = attrib.colors[4 * idx.vertex_index + 2];
+        tinyobj::real_t cA = attrib.colors[4 * idx.vertex_index + 3];
+        m_vertexColors.push_back(glm::vec4(cR, cG, cB, cA));
         m_ibos[current_material_id].push_back(m_vertexPositions.size() - 1);
       }
 
