@@ -208,7 +208,7 @@
       </script>
       <script src="js/cgi.js"></script>
       <script type="text/javascript">
-$(window).scroll(function() {
+setInterval(function() {
 $('video').each(function(){
     if ($(this).visible( false, true )) {
         $(this)[0].play();
@@ -216,7 +216,7 @@ $('video').each(function(){
         $(this)[0].pause();
     }
 })
-});
+}, 500);
       </script>
       <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
