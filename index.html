@@ -200,12 +200,24 @@
       ================================================== -->
       <!-- Placed at the end of the document so the pages load faster -->
       <script src="js/jquery.min.js"></script>
+      <script src="js/jquery.visible.min.js"></script>
       <script src="js/bootstrap.min.js"></script>
       <script src="js/google-code-prettify/prettify.js"></script>
       <script src="js/jquery.fancybox.pack.js?v=2.1.5"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
       </script>
       <script src="js/cgi.js"></script>
+      <script type="text/javascript">
+$(window).scroll(function() {
+$('video').each(function(){
+    if ($(this).visible( false, true )) {
+        $(this)[0].play();
+    } else {
+        $(this)[0].pause();
+    }
+})
+});
+      </script>
       <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
 tex2jax: {
