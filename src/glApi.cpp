@@ -8,26 +8,22 @@
 
 Buffer::Buffer(GLenum target) : m_location(0), m_target(target), m_attributeSize(0)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must allocate GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Buffer::~Buffer()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must release GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Buffer::bind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must bind the underlying GPU object to the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Buffer::unbind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must unbind the underlying GPU object from the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 uint Buffer::attributeCount() const
@@ -51,32 +47,27 @@ VAO::VAO(uint nbVBO) : m_location(0), m_vbos(nbVBO), m_ibo(GL_ELEMENT_ARRAY_BUFF
     vbo = std::shared_ptr<Buffer>(new Buffer(GL_ARRAY_BUFFER));
   }
   assert(nbVBO <= 16); // You may want to replace 16 by the real hardware limitation
-  std::cerr << __PRETTY_FUNCTION__ << ": You must allocate GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 VAO::~VAO()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must release GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void VAO::bind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must bind the underlying GPU object to the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void VAO::unbind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must unbind the underlying GPU object from the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void VAO::encapsulateVBO(unsigned int attributeIndex) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 std::shared_ptr<VAO> VAO::makeSlaveVAO() const
@@ -94,20 +85,17 @@ std::shared_ptr<VAO> VAO::makeSlaveVAO() const
 
 void VAO::draw(GLenum mode) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Shader::Shader(GLenum type, const std::string & filename) : m_location(0)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Shader::~Shader()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 uint Shader::location() const
@@ -117,87 +105,73 @@ uint Shader::location() const
 
 Program::Program(const std::string & vname, const std::string & fname) : m_location(0), m_vshader(GL_VERTEX_SHADER, vname), m_fshader(GL_FRAGMENT_SHADER, fname)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Program::~Program()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Program::bind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must bind the underlying GPU object to the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Program::unbind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must unbind the underlying GPU object from the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 bool Program::getUniformLocation(const std::string & name, int & location) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must update location to point to the target uniform and return true if valid" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
   return false;
 }
 
 template <> void Program::uniformDispatcher(int location, const int & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const uint & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const float & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the value to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::vec2 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::vec3 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::vec4 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::mat2 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::mat3 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Program::uniformDispatcher(int location, const glm::mat4 & val)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must send the values to the uniform GPU location" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 bool Program::bound() const
@@ -209,84 +183,70 @@ bool Program::bound() const
 
 Texture::Texture(GLenum target) : m_location(0), m_target(target)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must allocate GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Texture::~Texture()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must release GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Texture::bind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must bind the underlying GPU object to the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Texture::unbind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must unbind the underlying GPU object from the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Texture::setData<GLubyte>(const Image<GLubyte> & image, bool mipmaps) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Sampler::Sampler(int texUnit) : m_location(0), m_texUnit(texUnit)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must allocate GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 Sampler::~Sampler()
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must release GPU memory for this instance" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Sampler::bind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must bind the underlying GPU object to the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Sampler::unbind() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must unbind the underlying GPU object from the openGL state" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Sampler::attachToProgram(const Program & prog, const std::string & samplerName, BindOption bindOption) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Sampler::attachTexture(const Texture & texture) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Sampler::setParameter<int>(GLenum paramName, const int & value) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must set up the target sampler parameter with the value" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <> void Sampler::setParameter<float>(GLenum paramName, const float & value) const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must set up the target sampler parameter with the value" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 void Sampler::enableAnisotropicFiltering() const
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }

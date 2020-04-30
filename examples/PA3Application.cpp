@@ -26,8 +26,7 @@ std::shared_ptr<VAO> PA3Application::makeParamSurf(DiscreteLinRange rgPhi, Discr
   std::vector<glm::vec3> positions;
   std::vector<glm::vec3> colors;
   std::vector<uint> ibo;
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 
   std::shared_ptr<VAO> vao(new VAO(2));
   vao->setVBO(0, positions);
@@ -50,8 +49,7 @@ void PA3Application::makeASphere(unsigned int nbPhi, unsigned int nbTheta)
 void PA3Application::makeATorus(unsigned int nbPhi, unsigned int nbTheta, float smallRadius)
 {
   std::shared_ptr<VAO> vao;
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 
   glm::mat4 mw(1);
   mw = glm::translate(mw, {0.5, 0, 0});

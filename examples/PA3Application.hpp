@@ -1,5 +1,6 @@
 #ifndef __PA3_APPLICATION_H__
 #define __PA3_APPLICATION_H__
+#include <functional>
 #include <memory>
 #include "Application.hpp"
 #include "glApi.hpp"

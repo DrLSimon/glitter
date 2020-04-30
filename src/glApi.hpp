@@ -11,6 +11,11 @@ typedef GLuint uint;
 #include "AttributeProperties.hpp"
 #include "Image.hpp"
 
+#define FAIL_BECAUSE_INCOMPLETE                                                                                                                                                                        \
+  std::cerr << "Failure in file " << __FILE__ << ":" << __LINE__ << std::endl;                                                                                                                         \
+  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;                                                                 \
+  exit(EXIT_FAILURE);
+
 /**
  * @brief Tiny abstraction for OpenGL objects that can be bound to
  * the current openGL state (like VBOs, VAOs, Programs, Textures, ...)
@@ -501,20 +506,17 @@ private:
  */
 template <typename T> void Buffer::setData(const std::vector<T> & values)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <typename T> void VAO::setVBO(uint attributeIndex, const std::vector<T> & values)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <typename T> void VAO::setIBO(const std::vector<T> & values)
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation (look at the documentation in the header)" << std::endl;
-  assert(false);
+  FAIL_BECAUSE_INCOMPLETE;
 }
 
 template <typename T> void Program::setUniform(const std::string & name, const T & val) const
