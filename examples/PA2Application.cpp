@@ -27,7 +27,9 @@ void PA2Application::renderFrame()
   glClear(GL_COLOR_BUFFER_BIT);
   m_program.bind();
   std::cerr << __PRETTY_FUNCTION__ << ": You must complete the implementation here (look at the documentation in the header)" << std::endl;
-  glm::mat4 mvp(1);
+  glm::mat4 m(1);
+  glm::mat4 v(1);
+  glm::mat4 p(1);
   m_vao.draw(); // rendering first instance
   m_vao.draw(); // rendering second instance
   m_program.unbind();
