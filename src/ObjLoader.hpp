@@ -1,5 +1,5 @@
-#ifndef __OBJLOADER_H__
-#define __OBJLOADER_H__
+#ifndef __GLITTER_OBJLOADER_H__
+#define __GLITTER_OBJLOADER_H__
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
@@ -39,6 +39,12 @@ public:
    * Then all the exposed attributes are accessible through getters.
    */
   ObjLoader(const std::string & filename);
+
+  /**
+   * @brief Serialize the object in a .glitter file.
+   * @param filename
+   */
+  void saveBinaryFile(const std::string & filename) const;
 
   /**
    * @brief getter for vertex positions
@@ -101,12 +107,12 @@ private:
   public:
     NamedTextureImages() {}
     NamedTextureImages(const NamedTextureImages &) = delete;
-    NamedTextureImages & operator()(const NamedTextureImages &) = delete;
+    NamedTextureImages & operator=(const NamedTextureImages &) = delete;
     bool find(const std::string & name) const;
     void add(const std::string & name, const Image<> & image);
-    Image<> operator[](const std::string & name) const;
-
+    const Image<> & operator[](const std::string & name) const;
     ~NamedTextureImages();
+    std::vector<std::string> names() const;
 
   private:
     std::unordered_map<std::string, Image<>> m_images;
@@ -114,6 +120,7 @@ private:
 
 private:
   void parseFile(const std::string & filename);
+  void loadBinaryFile(const std::string & filename);
   void cleanUpDuplicates();
   void computeTangents();
 
@@ -135,4 +142,4 @@ private:
   static std::string defaultNormalName;
 };
 
-#endif // !defined(__OBJLOADER_H__)
+#endif // !defined(__GLITTER_OBJLOADER_H__)

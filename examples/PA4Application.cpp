@@ -119,7 +119,6 @@ void PA4Application::RenderObject::loadWavefront(const std::string & objname)
   const std::vector<SimpleMaterial> & materials = objLoader.materials();
   std::vector<glm::vec3> vextexPositions = objLoader.vertexPositions();
   const std::vector<glm::vec2> & vertexUVs = objLoader.vertexUVs();
-  const std::vector<glm::vec4> & vertexColors = objLoader.vertexColors();
   // set up the VBOs of the master VAO
   std::shared_ptr<VAO> vao(new VAO(2));
   vao->setVBO(0, vextexPositions);
@@ -148,7 +147,7 @@ void PA4Application::RenderObject::loadWavefront(const std::string & objname)
 unsigned int PA4Application::part;
 
 PA4Application::PA4Application(int windowWidth, int windowHeight)
-    : Application(windowWidth, windowHeight), m_currentTime(0), m_deltaTime(0), m_program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl"))
+    : Application(windowWidth, windowHeight), m_program(new Program("shaders/texture.v.glsl", "shaders/texture.f.glsl")), m_currentTime(0), m_deltaTime(0)
 {
   GLFWwindow * window = glfwGetCurrentContext();
   glfwGetFramebufferSize(window, &windowWidth, &windowHeight);

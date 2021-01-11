@@ -94,11 +94,11 @@ std::unique_ptr<PA5Application::RenderObject> PA5Application::RenderObject::crea
 void PA5Application::RenderObject::setProgramMaterial(std::shared_ptr<Program> & program, const SimpleMaterial & material) const
 {
   program->bind();
-  program->setUniform("lightsInWorld[0].direction", glm::normalize(glm::vec3(0, -1, -1)));
+  program->setUniform("lightsInWorld[0].direction", glm::normalize(glm::vec3(0, -1, 1)));
   program->setUniform("lightsInWorld[0].intensity", glm::vec3(0.7, 0.7, 0.7));
-  program->setUniform("lightsInWorld[1].direction", glm::normalize(glm::vec3(0, 1, -0.5)));
+  program->setUniform("lightsInWorld[1].direction", glm::normalize(glm::vec3(0, 1, 0.5)));
   program->setUniform("lightsInWorld[1].intensity", glm::vec3(0.5, 0.5, 0.5));
-  program->setUniform("lightsInWorld[2].direction", glm::normalize(glm::vec3(-1, 0, -1)));
+  program->setUniform("lightsInWorld[2].direction", glm::normalize(glm::vec3(-1, 0, 1)));
   program->setUniform("lightsInWorld[2].intensity", glm::vec3(0.6, 0.6, 0.6));
   program->setUniform("material.ambient", material.ambient);
   program->setUniform("material.diffuse", material.diffuse);
@@ -182,10 +182,12 @@ PA5Application::PA5Application(int windowWidth, int windowHeight) : Application(
   mw = glm::rotate(mw, -5 * pi / 6, {0, 1, 0});
   mw = glm::scale(mw, glm::vec3(0.25));
   m_objects.push_back(RenderObject::createWavefrontInstance("meshes/Tron/TronLightCycle.obj", mw));
+  // m_objects.push_back(RenderObject::createWavefrontInstance("tmp/tron.glitter", mw)); // TODO : Check this
   mw = glm::mat4(1);
   mw = glm::translate(mw, {2, 1, -0.1});
   mw = glm::rotate(mw, pi, {1, 0, 0});
   m_objects.push_back(RenderObject::createWavefrontInstance("meshes/Pallet/Bswap_HPBake_Planks.obj", mw));
+  // m_objects.push_back(RenderObject::createWavefrontInstance("tmp/pallet.glitter", mw)); // TODO : Check this
 }
 
 void PA5Application::setCallbacks()

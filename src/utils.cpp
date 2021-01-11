@@ -1,4 +1,6 @@
 #include "utils.hpp"
+#include <cstring>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <fstream>
 #include <iostream>
@@ -57,8 +59,9 @@ std::string fileContent(const std::string & filename)
 
 std::string absolutename(const std::string & filename)
 {
-  if (filename[0] == '/')
+  if (filename[0] == '/') {
     return filename;
+  }
   return std::string(RESOURCE_DIR) + "/" + filename;
 }
 
@@ -76,4 +79,10 @@ std::string basename(const std::string & filepath)
   basedir += "/";
 #endif
   return basedir;
+}
+
+
+bool endsWith(const std::string & str, const std::string & suffix)
+{
+  return (suffix.size() <= str.size() && !strcmp(str.c_str() + str.size() - suffix.size(), suffix.c_str()));
 }
