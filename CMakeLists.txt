@@ -5,6 +5,17 @@ cmake_minimum_required (VERSION 2.8)
 project(GLITTER)
 
 # +------------------------------------------------------------------+
+# |  Test system endian type                                         |
+# +------------------------------------------------------------------+
+include (TestBigEndian)
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+if(IS_BIG_ENDIAN)
+  add_definitions(-DIS_BIG_ENDIAN)
+else()
+  add_definitions(-DIS_LITTLE_ENDIAN)
+endif()
+
+# +------------------------------------------------------------------+
 # |  Compilation flags                                               |
 # +------------------------------------------------------------------+
 set (CMAKE_CXX_STANDARD 11)
@@ -32,6 +43,8 @@ set(UTILS_SRC src/glApi.hpp
               src/SimpleMaterial.hpp
               src/utils.hpp
               src/utils.cpp
+              src/Serialize.hpp
+              src/Serialize.cpp
               src/AttributeProperties.hpp)
 add_library(utils ${UTILS_SRC})
 
@@ -80,6 +93,15 @@ add_executable(rubik
   rubik/hud.f.glsl
   )
 target_link_libraries(rubik utils ${GLFW3_LIBRARIES} ${GLEW_LIBRARIES})
+
+# +------------------------------------------------------------------+
+# |  obj2glitter file converter                                      |
+# +------------------------------------------------------------------+
+
+add_executable(obj2glitter
+  examples/obj2glitter.cpp
+  )
+target_link_libraries(obj2glitter utils ${GLEW_LIBRARIES})
 
 # +------------------------------------------------------------------+
 # |  Doxygen Generation                                              |

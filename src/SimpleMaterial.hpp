@@ -1,5 +1,5 @@
-#ifndef __SIMPLE_MATERIAL_H__
-#define __SIMPLE_MATERIAL_H__
+#ifndef __GLITTER_SIMPLE_MATERIAL_H__
+#define __GLITTER_SIMPLE_MATERIAL_H__
 
 #include <glm/glm.hpp>
 #include <string>
@@ -15,4 +15,4 @@ struct SimpleMaterial {
   std::string normalTexName;
   std::string specularTexName;
 };
-#endif // !defined(__SIMPLE_MATERIAL_H__)
+#endif // !defined(__GLITTER_SIMPLE_MATERIAL_H__)

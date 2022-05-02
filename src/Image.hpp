@@ -1,5 +1,5 @@
-#ifndef __IMAGE_H__
-#define __IMAGE_H__
+#ifndef __GLITTER_IMAGE_H__
+#define __GLITTER_IMAGE_H__
 
 /**
  * @brief The Image struct
@@ -37,6 +37,7 @@ public:
   int depth;
   int channels;
   T * data;
+  typedef T value_type;
 };
 
-#endif // !defined(__IMAGE_H__)
+#endif // !defined(__GLITTER_IMAGE_H__)

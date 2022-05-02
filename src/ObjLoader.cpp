@@ -4,6 +4,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 
 #include "ObjLoader.hpp"
+#include "Serialize.hpp"
 #include "utils.hpp"
 
 static glm::vec3 calcNormal(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2)
@@ -26,7 +27,11 @@ ObjLoader::ObjLoader(const std::string & filename)
   m_rootDir = basename(absolutepath);
   m_images.add(defaultDiffuseName, Image<>(white, 1, 1, 4));
   m_images.add(defaultNormalName, Image<>(bluish, 1, 1, 4));
-  parseFile(absolutepath);
+  if (endsWith(absolutepath, ".glitter")) {
+    loadBinaryFile(absolutepath);
+  } else {
+    parseFile(absolutepath);
+  }
 }
 
 const std::vector<SimpleMaterial> & ObjLoader::materials() const
@@ -87,12 +92,12 @@ void ObjLoader::loadImage(std::string texture_filename)
       }
 
       Image<> image;
+      image.depth = 1;
       image.data = stbi_load(texture_filename.c_str(), &image.width, &image.height, &image.channels, STBI_default);
       if (!image.data) {
         std::cerr << "Unable to load texture: " << texture_filename << std::endl;
         exit(1);
       }
-      std::cout << "Loaded texture: " << texture_filename << ", w = " << image.width << ", h = " << image.height << ", channels = " << image.channels << std::endl;
       m_images.add(key, image);
     }
   }
@@ -161,7 +166,7 @@ void ObjLoader::parseFile(const std::string & filename)
           tinyobj::real_t nx = attrib.normals[3 * idx.normal_index + 0];
           tinyobj::real_t ny = attrib.normals[3 * idx.normal_index + 1];
           tinyobj::real_t nz = attrib.normals[3 * idx.normal_index + 2];
-          m_vertexNormals.push_back(glm::vec3(nx, ny, nz));
+          m_vertexNormals.push_back(-glm::vec3(nx, ny, nz));
         }
         if (attrib.texcoords.size() > 0) {
           tinyobj::real_t tx = attrib.texcoords[2 * idx.texcoord_index + 0];
@@ -171,10 +176,10 @@ void ObjLoader::parseFile(const std::string & filename)
           m_vertexUVs.push_back({0, 0});
         }
         //! note: beware attrib.colors is not empty even if no colors were specified (it is filled with black colors)
-        tinyobj::real_t cR = attrib.colors[4 * idx.vertex_index + 0];
-        tinyobj::real_t cG = attrib.colors[4 * idx.vertex_index + 1];
-        tinyobj::real_t cB = attrib.colors[4 * idx.vertex_index + 2];
-        tinyobj::real_t cA = attrib.colors[4 * idx.vertex_index + 3];
+        tinyobj::real_t cR = attrib.colors[3 * idx.vertex_index + 0];
+        tinyobj::real_t cG = attrib.colors[3 * idx.vertex_index + 1];
+        tinyobj::real_t cB = attrib.colors[3 * idx.vertex_index + 2];
+        tinyobj::real_t cA = 1;
         m_vertexColors.push_back(glm::vec4(cR, cG, cB, cA));
         m_ibos[current_material_id].push_back(m_vertexPositions.size() - 1);
       }
@@ -194,6 +199,152 @@ void ObjLoader::parseFile(const std::string & filename)
   }
   computeTangents();
   cleanUpDuplicates();
+}
+
+void ObjLoader::saveBinaryFile(const std::string & filename) const
+{
+#define GLITTER_BINFILE_MAGIC "GLITTER_BIN_OBJ\n"
+  std::ofstream file(filename.c_str());
+  file.write(GLITTER_BINFILE_MAGIC, strlen(GLITTER_BINFILE_MAGIC));
+
+  write(std::string("[VertexPositions]"), file);
+  write(m_vertexPositions, file);
+  write(std::string("[VertexColors]"), file);
+  write(m_vertexColors, file);
+  write(std::string("[VertexUVs]"), file);
+  write(m_vertexUVs, file);
+  write(std::string("[VertexNormals]"), file);
+  write(m_vertexNormals, file);
+  write(std::string("[VertexTangents]"), file);
+  write(m_vertexTangents, file);
+
+  write(std::string("[IBOS]"), file);
+  // IBOs
+  std::uint64_t count = m_ibos.size();
+  write(count, file);
+  for (const IBO & ibo : m_ibos) {
+    write(ibo, file);
+  }
+
+  write(std::string("[NamedTextureImages]"), file);
+  // NamedTextureImages m_images;
+  std::vector<std::string> textureImageNames = m_images.names();
+  count = textureImageNames.size();
+  write(count, file);
+  for (const std::string & name : textureImageNames) {
+    write(std::string("_Image_"), file);
+    write(name, file);
+    Image<> image = m_images[name];
+    glm::int32 w = image.width;
+    glm::int32 h = image.height;
+    glm::int32 d = image.depth;
+    glm::int32 c = image.channels;
+    write(w, file);
+    write(h, file);
+    write(d, file);
+    write(c, file);
+    file.write(reinterpret_cast<const char *>(image.data), w * h * d * c);
+  }
+
+  write(std::string("[SimpleMaterials]"), file);
+  // std::vector<SimpleMaterial> m_materials;
+  count = m_materials.size();
+  write(count, file);
+  for (const SimpleMaterial & material : m_materials) {
+    write(std::string("_Material_"), file);
+    write(material.name, file);
+    write(material.ambient, file);
+    write(material.diffuse, file);
+    write(material.specular, file);
+    write(material.shininess, file);
+    write(material.diffuseTexName, file);
+    write(material.normalTexName, file);
+    write(material.specularTexName, file);
+  }
+}
+
+void ObjLoader::loadBinaryFile(const std::string & filename)
+{
+  std::ifstream file(filename.c_str());
+  char magicBuffer[255];
+  memset(magicBuffer, 0, 255);
+  file.read(magicBuffer, strlen(GLITTER_BINFILE_MAGIC));
+  assert(!strcmp(magicBuffer, GLITTER_BINFILE_MAGIC) && "ObjLoader::loadBinaryFile(): Wrong file magic number");
+
+  std::string magic;
+
+  read(magic, file);
+  assert((magic == "[VertexPositions]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  read(m_vertexPositions, file);
+
+  read(magic, file);
+  assert((magic == "[VertexColors]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  read(m_vertexColors, file);
+
+  read(magic, file);
+  assert((magic == "[VertexUVs]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  read(m_vertexUVs, file);
+
+  read(magic, file);
+  assert((magic == "[VertexNormals]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  read(m_vertexNormals, file);
+
+  read(magic, file);
+  assert((magic == "[VertexTangents]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  read(m_vertexTangents, file);
+
+  read(magic, file);
+  assert((magic == "[IBOS]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  // IBOs
+  std::uint64_t count;
+  read(count, file);
+  m_ibos.resize(count);
+  for (IBO & ibo : m_ibos) {
+    read(ibo, file);
+  }
+
+  read(magic, file);
+  assert((magic == "[NamedTextureImages]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  // NamedTextureImages m_images;
+  read(count, file);
+  while (count--) {
+    read(magic, file);
+    assert((magic == "_Image_") && "ObjLoader::loadBinaryFile(): Tag not found");
+    std::string name;
+    read(name, file);
+    Image<> image;
+    glm::int32 value;
+    read(value, file);
+    image.width = value;
+    read(value, file);
+    image.height = value;
+    read(value, file);
+    image.depth = value;
+    read(value, file);
+    image.channels = value;
+    size_t dataSize = image.width * image.height * image.depth * image.channels;
+    image.data = new Image<>::value_type[dataSize];
+    file.read(reinterpret_cast<char *>(image.data), dataSize * sizeof(Image<>::value_type));
+    m_images.add(name, image);
+  }
+
+  read(magic, file);
+  assert((magic == "[SimpleMaterials]") && "ObjLoader::loadBinaryFile(): Tag not found");
+  // std::vector<SimpleMaterial> m_materials;
+  read(count, file);
+  m_materials.resize(count);
+  for (SimpleMaterial & material : m_materials) {
+    read(magic, file);
+    assert((magic == "_Material_") && "ObjLoader::loadBinaryFile(): Tag not found");
+    read(material.name, file);
+    read(material.ambient, file);
+    read(material.diffuse, file);
+    read(material.specular, file);
+    read(material.shininess, file);
+    read(material.diffuseTexName, file);
+    read(material.normalTexName, file);
+    read(material.specularTexName, file);
+  }
 }
 
 void ObjLoader::computeTangents()
@@ -330,7 +481,6 @@ void ObjLoader::cleanUpDuplicates()
     }
     ibo = cleanIBO;
   }
-  std::cout << "Old size : " << m_vertexPositions.size() << "\nNew size : " << cleanPositions.size() << std::endl;
   m_vertexPositions = cleanPositions;
   m_vertexNormals = cleanNormals;
   m_vertexTangents = cleanTangents;
@@ -348,13 +498,14 @@ void ObjLoader::NamedTextureImages::add(const std::string & name, const Image<> 
   m_images[name] = image;
 }
 
-Image<> ObjLoader::NamedTextureImages::operator[](const std::string & name) const
+const Image<> & ObjLoader::NamedTextureImages::operator[](const std::string & name) const
 {
+  static Image<> defaultImage(white, 1, 1, 4);
   auto searchRes = m_images.find(name);
   if (searchRes != m_images.end()) {
     return searchRes->second;
   }
-  return Image<>(white, 1, 1, 4);
+  return defaultImage;
 }
 
 ObjLoader::NamedTextureImages::~NamedTextureImages()
@@ -366,4 +517,15 @@ ObjLoader::NamedTextureImages::~NamedTextureImages()
     unsigned char * imgData = namedImage.second.data;
     stbi_image_free(imgData);
   }
+}
+
+std::vector<std::string> ObjLoader::NamedTextureImages::names() const
+{
+  std::vector<std::string> names;
+  std::unordered_map<std::string, Image<>>::const_iterator it = m_images.cbegin();
+  while (it != m_images.end()) {
+    names.push_back(it->first);
+    ++it;
+  }
+  return names;
 }

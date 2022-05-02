@@ -33,6 +33,8 @@ public:
    * @brief unbinds this instance GPU location to the current state
    */
   virtual void unbind() const = 0;
+
+  virtual ~OGLStateObject() {}
 };
 
 /**
