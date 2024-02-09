@@ -14,6 +14,7 @@
 #include "PA3Application.hpp"
 #include "PA4Application.hpp"
 #include "PA5Application.hpp"
+#include "ProjectApplication.hpp"
 #include "glApi.hpp"
 #include "termcolor/termcolor.hpp"
 #include "utils.hpp"
@@ -93,7 +94,10 @@ int main(int argc, char * argv[])
   } else if (!strcmp(argv[1], "pa5")) {
     PA5Application::displayNormals = false;
     app = new PA5Application(640, 480);
-  }
+  } else if (!strcmp(argv[1], "project")) {
+    PA5Application::displayNormals = false;
+    app = new ProjectApplication(640, 480);
+  } 
   app->setCallbacks();
   app->mainLoop();
   delete app;
