@@ -1,7 +1,7 @@
 # +------------------------------------------------------------------+
 # |  Projects Settings                                               |
 # +------------------------------------------------------------------+
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8...3.22)
 project(GLITTER)
 
 # +------------------------------------------------------------------+
@@ -18,9 +18,10 @@ endif()
 # +------------------------------------------------------------------+
 # |  Compilation flags                                               |
 # +------------------------------------------------------------------+
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 20)
 add_definitions(-Wall -Wextra)
 add_definitions(-DRESOURCE_DIR=\"${CMAKE_SOURCE_DIR}\")
+set(OpenGL_GL_PREFERENCE GLVND)
 
 # +------------------------------------------------------------------+
 # |  Load libraries                                                  |
