@@ -60,8 +60,7 @@ void Application::initOGLContext(int windowWidth, int windowHeight, const char *
   GLenum GlewInitResult = glewInit();
   std::cerr << "Here, we should expect to get a GL_INVALID_ENUM (that's a known bug), and indeed:" << std::endl;
   checkGLerror();
-  if (GlewInitResult != GLEW_OK) {
-    std::cerr << "ERROR: " << glewGetErrorString(GlewInitResult) << std::endl;
+  if (!checkGLEWInitResult(GlewInitResult)) {
     shutDown(1);
   }
 

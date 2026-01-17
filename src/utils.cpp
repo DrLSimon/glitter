@@ -44,6 +44,23 @@ void checkGLerror()
     std::cerr << "OpenGL Error: " << gluErrorString(errCode) << std::endl;
 }
 
+bool checkGLEWInitResult(GLenum glewResult){
+  if (glewResult == GLEW_OK) {
+    return true;
+  }
+
+  const char* sessionType = std::getenv("XDG_SESSION_TYPE");
+  bool isWayland = (sessionType && std::string(sessionType) == "wayland");
+
+  if (glewResult == GLEW_ERROR_NO_GLX_DISPLAY && isWayland) {
+    std::cerr << "NO_GLX_DISPLAY ignored safely because we are on Wayland." << std::endl;
+    return true;
+  }
+
+  std::cerr << "ERROR: " << glewGetErrorString(glewResult) << std::endl;
+  return false;
+}
+
 bool fileExists(const std::string & name)
 {
   std::ifstream f(name.c_str());
