@@ -4,6 +4,8 @@
 #include <iostream>
 #include "utils.hpp"
 
+
+
 Application::Application(int windowWidth, int windowHeight, const char * title)
 {
   initOGLContext(windowWidth, windowHeight, title);
@@ -30,6 +32,8 @@ void Application::mainLoop()
     glfwPollEvents();
   }
 }
+
+bool checkGLEWInitResult(GLenum glewResult);
 
 void Application::initOGLContext(int windowWidth, int windowHeight, const char * title)
 {
@@ -58,9 +62,8 @@ void Application::initOGLContext(int windowWidth, int windowHeight, const char *
   // profile: http://www.opengl.org/wiki/OpenGL_Loading_Library#GLEW
   glewExperimental = GL_TRUE;
   GLenum GlewInitResult = glewInit();
-  std::cerr << "Here, we should expect to get a GL_INVALID_ENUM (that's a known bug), and indeed:" << std::endl;
   checkGLerror();
-  if (GlewInitResult != GLEW_OK) {
+  if (!checkGLEWInitResult(GlewInitResult)) {
     std::cerr << "ERROR: " << glewGetErrorString(GlewInitResult) << std::endl;
     shutDown(1);
   }
@@ -76,3 +79,21 @@ void Application::shutDown(int return_code)
   glfwTerminate();
   exit(return_code);
 }
+
+
+bool checkGLEWInitResult(GLenum glewResult){
+      if (glewResult == GLEW_OK) {
+          return true;
+      }
+
+      const char* sessionType = std::getenv("XDG_SESSION_TYPE");
+      bool isWayland = (sessionType && std::string(sessionType) == "wayland");
+
+      if (glewResult == GLEW_ERROR_NO_GLX_DISPLAY && isWayland) {
+          std::cerr << "NO_GLX_DISPLAY ignored safely because we are on Wayland." << std::endl;
+          return true;
+      }
+
+      std::cerr << "ERROR: " << glewGetErrorString(glewResult) << std::endl;
+      return false;
+  }
