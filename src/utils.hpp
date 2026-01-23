@@ -2,7 +2,6 @@
 #ifndef __GLITTER_UTILS_H__
 #define __GLITTER_UTILS_H__
 
-#include "glApi.hpp"
 #ifndef RESOURCE_DIR
 #define RESOURCE_DIR "."
 #endif
@@ -32,8 +31,5 @@ bool endsWith(const std::string & str, const std::string & suffix);
 
 /// @brief pop the last open GL error and display it in human readable format
 void checkGLerror();
-
-/// @brief handles glew initialisation errors
-bool checkGLEWInitResult(GLenum glewResult);
 
 #endif // __GLITTER_UTILS_H__
